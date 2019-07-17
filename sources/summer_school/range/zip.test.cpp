@@ -23,9 +23,13 @@ TEST_CASE("Zip") {
 
         ++iterator;
 
+        REQUIRE(iterator != end);
+
         REQUIRE(*iterator == std::make_pair("John"sv, 32));
 
         ++iterator;
+
+        REQUIRE(iterator != end);
 
         REQUIRE(*iterator == std::make_pair("Sam"sv, 48));
 
@@ -48,6 +52,8 @@ TEST_CASE("Zip") {
 
         ++iterator;
 
+        REQUIRE(iterator != end);
+
         REQUIRE(*iterator == std::make_pair("Arthas"sv, 22));
 
         ++iterator;
@@ -68,6 +74,8 @@ TEST_CASE("Zip") {
         REQUIRE(*iterator == std::make_pair("Zusan"sv, 50));
 
         ++iterator;
+
+        REQUIRE(iterator != end);
 
         REQUIRE(*iterator == std::make_pair("John"sv, 60));
 

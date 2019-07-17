@@ -37,18 +37,18 @@ public:
 
     ZipIterator& operator=(ZipIterator&&) noexcept = default;
 
-    ZipIterator operator++(int) {
-        auto copy = *this;
-        ++*this;
-        return copy;
-    }
-
     ZipIterator& operator++() {
         if (leftPosition_ != leftEnd_ && rightPosition_ != rightEnd_) {
             ++leftPosition_;
             ++rightPosition_;
         }
         return *this;
+    }
+
+    ZipIterator operator++(int) {
+        auto copy = *this;
+        ++*this;
+        return copy;
     }
 
     value_type operator*() { return {*leftPosition_, *rightPosition_}; }
