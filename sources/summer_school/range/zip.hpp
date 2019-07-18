@@ -13,15 +13,12 @@ template<typename LeftIterator, typename RightIterator>
 class ZipIterator {
 public:
     friend bool operator==(ZipIterator a, ZipIterator b) {
-        return ((a.leftPosition_ == b.leftPosition_) & (a.rightPosition_ == b.rightPosition_)) |
-               ((a.leftPosition_ == a.leftEnd_) & (b.leftPosition_ == b.leftEnd_)) |
-               ((a.leftPosition_ == a.leftEnd_) & (b.rightPosition_ == b.rightEnd_)) |
-               ((a.rightPosition_ == a.rightEnd_) & (b.leftPosition_ == b.leftEnd_)) |
-               ((a.rightPosition_ == a.rightEnd_) & (b.rightPosition_ == b.rightEnd_));
+        return a.leftPosition_ == b.leftPosition_ || a.rightPosition_ == b.rightPosition_;
     }
 
     using difference_type = long long;
-    using value_type = decltype(std::make_pair(*std::declval<LeftIterator>(), *std::declval<RightIterator>()));
+    using value_type = std::pair<std::decay_t<decltype(*std::declval<LeftIterator>())>,
+                                 std::decay_t<decltype(*std::declval<RightIterator>())>>;
     using pointer = value_type*;
     using reference = value_type&;
     using iterator_category = std::input_iterator_tag;
@@ -51,7 +48,7 @@ public:
         return copy;
     }
 
-    value_type operator*() { return {*leftPosition_, *rightPosition_}; }
+    auto operator*() const { return value_type{*leftPosition_, *rightPosition_}; }
 
 private:
     LeftIterator leftPosition_;
@@ -68,20 +65,23 @@ bool operator!=(ZipIterator<LeftIterator, RightIterator> a, ZipIterator<LeftIter
 template<typename LeftRange, typename RightRange>
 struct ZipView {
 public:
-    using const_iterator = ZipIterator<typename summer_school::range::storage::Storage<LeftRange>::const_iterator,
-                                       typename summer_school::range::storage::Storage<RightRange>::const_iterator>;
+    using left_range_storage_type = summer_school::range::storage::Storage<LeftRange>;
+    using right_range_storage_type = summer_school::range::storage::Storage<RightRange>;
+    using const_iterator = ZipIterator<typename left_range_storage_type::const_iterator,
+                                       typename right_range_storage_type::const_iterator>;
     using iterator = const_iterator;
     using range_category = summer_school::range::category::view_tag;
 
-    template<typename Left, typename Right>
-    ZipView(Left&& left, Right&& right)
-        : leftRange_{std::forward<Left>(left)}, rightRange_{std::forward<Right>(right)} {}
+    template<typename LeftRangeForward, typename RightRangeForward>
+    ZipView(LeftRangeForward&& leftRange, RightRangeForward&& rightRange)
+        : leftRange_{std::forward<LeftRangeForward>(leftRange)},
+          rightRange_{std::forward<RightRangeForward>(rightRange)} {}
 
-    ZipView(const ZipView&) = default;
+    ZipView(const ZipView&) = delete;
 
     ZipView(ZipView&&) noexcept = default;
 
-    ZipView& operator=(const ZipView&) = default;
+    ZipView& operator=(const ZipView&) = delete;
 
     ZipView& operator=(ZipView&&) noexcept = default;
 
@@ -96,13 +96,31 @@ public:
     auto end() const { return cend(); }
 
 private:
-    summer_school::range::storage::Storage<LeftRange> leftRange_;
+    left_range_storage_type leftRange_;
+    right_range_storage_type rightRange_;
+};
+
+template<typename RightRange>
+class ZipViewFactory {
+public:
+    using range_factory_category = summer_school::range::category::view_factory_tag;
+
+    template<typename RightRangeForward>
+    explicit ZipViewFactory(RightRangeForward&& rightRange)
+        : rightRange_{std::forward<RightRangeForward>(rightRange)} {}
+
+    template<typename LeftRange>
+    auto create(LeftRange&& leftRange) && {
+        return ZipView<LeftRange&&, RightRange&&>{std::forward<LeftRange>(leftRange), std::move(rightRange_)};
+    }
+
+private:
     summer_school::range::storage::Storage<RightRange> rightRange_;
 };
 
-template<typename LeftView, typename RightView>
-auto zip(LeftView&& leftView, RightView&& rightView) {
-    return ZipView<LeftView&&, RightView&&>{std::forward<LeftView>(leftView), std::forward<RightView>(rightView)};
+template<typename RightRange, typename = std::enable_if_t<summer_school::range::category::is_pipe_head<RightRange>>>
+auto zip(RightRange&& rightRange) {
+    return ZipViewFactory<RightRange&&>{std::forward<RightRange>(rightRange)};
 }
 
 }

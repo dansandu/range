@@ -6,6 +6,7 @@
 #include <vector>
 
 using summer_school::range::zip::zip;
+using summer_school::range::category::operator|;
 using std::string_view_literals::operator""sv;
 
 TEST_CASE("Zip") {
@@ -13,9 +14,9 @@ TEST_CASE("Zip") {
         std::vector<std::string_view> names = {"Annie", "John", "Sam"};
         std::vector<int> ages = {23, 32, 48};
 
-        auto zipView = zip(names, ages);
-        auto iterator = zipView.begin();
-        auto end = zipView.end();
+        auto range = names | zip(ages);
+        auto iterator = range.begin();
+        auto end = range.end();
 
         REQUIRE(iterator != end);
 
@@ -42,9 +43,9 @@ TEST_CASE("Zip") {
         std::vector<std::string_view> names = {"Jim", "Arthas"};
         std::vector<int> ages = {32, 22, 15};
 
-        auto zipView = zip(names, ages);
-        auto iterator = zipView.begin();
-        auto end = zipView.end();
+        auto range = names | zip(ages);
+        auto iterator = range.begin();
+        auto end = range.end();
 
         REQUIRE(iterator != end);
 
@@ -65,9 +66,9 @@ TEST_CASE("Zip") {
         std::vector<std::string_view> names = {"Zusan", "John", "Lizbeth"};
         std::vector<int> ages = {50, 60};
 
-        auto zipView = zip(names, ages);
-        auto iterator = zipView.begin();
-        auto end = zipView.end();
+        auto range = names | zip(ages);
+        auto iterator = range.begin();
+        auto end = range.end();
 
         REQUIRE(iterator != end);
 
@@ -86,23 +87,23 @@ TEST_CASE("Zip") {
 
     SECTION("lvalue and rvalue ranges") {
         std::vector<std::string_view> names = {"Matt", "Kate"};
-        std::vector<std::string_view> favoriteColour = {"magenta", "aquamarine"};
+        std::vector<std::string_view> favoriteColours = {"magenta", "aquamarine"};
 
         using expected_type = std::vector<std::pair<std::string_view, std::string_view>>;
         expected_type expected = {{"Matt", "magenta"}, {"Kate", "aquamarine"}};
 
         SECTION("lvalue on the left and rvalue on the right") {
-            auto zipView = zip(names, std::move(favoriteColour));
-            auto actual = expected_type{zipView.begin(), zipView.end()};
+            auto range = names | zip(std::move(favoriteColours));
+            auto actual = expected_type{range.begin(), range.end()};
 
-            REQUIRE(favoriteColour.empty());
+            REQUIRE(favoriteColours.empty());
 
             REQUIRE(actual == expected);
         }
 
         SECTION("rvalue on the left and lvalue on the right") {
-            auto zipView = zip(std::move(names), favoriteColour);
-            auto actual = expected_type{zipView.begin(), zipView.end()};
+            auto range = std::move(names) | zip(favoriteColours);
+            auto actual = expected_type{range.begin(), range.end()};
 
             REQUIRE(names.empty());
 
@@ -110,12 +111,12 @@ TEST_CASE("Zip") {
         }
 
         SECTION("rvalue on the left and rvalue on the right") {
-            auto zipView = zip(std::move(names), std::move(favoriteColour));
-            auto actual = expected_type{zipView.begin(), zipView.end()};
+            auto range = std::move(names) | zip(std::move(favoriteColours));
+            auto actual = expected_type{range.begin(), range.end()};
 
             REQUIRE(names.empty());
 
-            REQUIRE(favoriteColour.empty());
+            REQUIRE(favoriteColours.empty());
 
             REQUIRE(actual == expected);
         }
