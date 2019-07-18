@@ -17,11 +17,11 @@ public:
                (a.elementsTaken_ == a.elementsToTake_ && b.elementsTaken_ == b.elementsToTake_);
     }
 
-    using difference_type = long long;
+    using iterator_category = std::input_iterator_tag;
     using value_type = std::decay_t<decltype(*std::declval<Iterator>())>;
     using pointer = value_type*;
     using reference = value_type&;
-    using iterator_category = std::input_iterator_tag;
+    using difference_type = long long;
 
     TakeIterator(Iterator position, Iterator end, int elementsToTake)
         : position_{position}, end_{end}, elementsTaken_{0}, elementsToTake_{elementsToTake} {}
@@ -65,10 +65,10 @@ auto operator!=(TakeIterator<Iterator> a, TakeIterator<Iterator> b) {
 template<typename InputRange>
 class TakeView {
 public:
+    using range_category = summer_school::range::category::view_tag;
     using range_storage_type = summer_school::range::storage::Storage<InputRange>;
     using const_iterator = TakeIterator<typename range_storage_type::const_iterator>;
     using iterator = const_iterator;
-    using range_category = summer_school::range::category::view_tag;
 
     template<typename InputRangeForward>
     TakeView(InputRangeForward&& inputRange, int elementsToTake)

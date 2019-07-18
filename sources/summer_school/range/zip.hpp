@@ -16,12 +16,12 @@ public:
         return a.leftPosition_ == b.leftPosition_ || a.rightPosition_ == b.rightPosition_;
     }
 
-    using difference_type = long long;
+    using iterator_category = std::input_iterator_tag;
     using value_type = std::pair<std::decay_t<decltype(*std::declval<LeftIterator>())>,
                                  std::decay_t<decltype(*std::declval<RightIterator>())>>;
     using pointer = value_type*;
     using reference = value_type&;
-    using iterator_category = std::input_iterator_tag;
+    using difference_type = long long;
 
     ZipIterator(LeftIterator leftPosition, LeftIterator leftEnd, RightIterator rightPosition, RightIterator rightEnd)
         : leftPosition_{leftPosition}, leftEnd_{leftEnd}, rightPosition_{rightPosition}, rightEnd_{rightEnd} {}
@@ -65,12 +65,12 @@ bool operator!=(ZipIterator<LeftIterator, RightIterator> a, ZipIterator<LeftIter
 template<typename LeftRange, typename RightRange>
 struct ZipView {
 public:
+    using range_category = summer_school::range::category::view_tag;
     using left_range_storage_type = summer_school::range::storage::Storage<LeftRange>;
     using right_range_storage_type = summer_school::range::storage::Storage<RightRange>;
     using const_iterator = ZipIterator<typename left_range_storage_type::const_iterator,
                                        typename right_range_storage_type::const_iterator>;
     using iterator = const_iterator;
-    using range_category = summer_school::range::category::view_tag;
 
     template<typename LeftRangeForward, typename RightRangeForward>
     ZipView(LeftRangeForward&& leftRange, RightRangeForward&& rightRange)
