@@ -47,9 +47,6 @@ struct is_pipe_head_wrapper<std::vector<Type>> {
 };
 
 template<typename Type>
-inline constexpr bool is_pipe_head = is_pipe_head_wrapper<typename std::decay_t<Type>>::getValue(best_case{});
-
-template<typename Type>
 struct is_range_factory_wrapper {
     template<typename = Type>
     static constexpr bool getValue(general_case) {
@@ -62,6 +59,9 @@ struct is_range_factory_wrapper {
         return value;
     }
 };
+
+template<typename Type>
+inline constexpr bool is_pipe_head = is_pipe_head_wrapper<typename std::decay_t<Type>>::getValue(best_case{});
 
 template<typename Type>
 inline constexpr bool is_range_factory = is_range_factory_wrapper<typename std::decay_t<Type>>::getValue(best_case{});
