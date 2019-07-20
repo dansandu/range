@@ -1,13 +1,13 @@
 #pragma once
 
-#include "summer_school/range/category.hpp"
-#include "summer_school/range/storage.hpp"
+#include "dansandu/range/category.hpp"
+#include "dansandu/range/storage.hpp"
 
 #include <iterator>
 #include <type_traits>
 #include <utility>
 
-namespace summer_school::range::zip {
+namespace dansandu::range::zip {
 
 template<typename LeftIterator, typename RightIterator>
 class ZipIterator {
@@ -65,9 +65,9 @@ bool operator!=(ZipIterator<LeftIterator, RightIterator> a, ZipIterator<LeftIter
 template<typename LeftRange, typename RightRange>
 struct ZipView {
 public:
-    using range_category = summer_school::range::category::view_tag;
-    using left_range_storage_type = summer_school::range::storage::Storage<LeftRange>;
-    using right_range_storage_type = summer_school::range::storage::Storage<RightRange>;
+    using range_category = dansandu::range::category::view_tag;
+    using left_range_storage_type = dansandu::range::storage::Storage<LeftRange>;
+    using right_range_storage_type = dansandu::range::storage::Storage<RightRange>;
     using const_iterator = ZipIterator<typename left_range_storage_type::const_iterator,
                                        typename right_range_storage_type::const_iterator>;
     using iterator = const_iterator;
@@ -103,7 +103,7 @@ private:
 template<typename RightRange>
 class ZipViewFactory {
 public:
-    using range_factory_category = summer_school::range::category::view_factory_tag;
+    using range_factory_category = dansandu::range::category::view_factory_tag;
 
     template<typename RightRangeForward>
     explicit ZipViewFactory(RightRangeForward&& rightRange)
@@ -123,10 +123,10 @@ public:
     }
 
 private:
-    summer_school::range::storage::Storage<RightRange> rightRange_;
+    dansandu::range::storage::Storage<RightRange> rightRange_;
 };
 
-template<typename RightRange, typename = std::enable_if_t<summer_school::range::category::is_pipe_head<RightRange>>>
+template<typename RightRange, typename = std::enable_if_t<dansandu::range::category::is_pipe_head<RightRange>>>
 auto zip(RightRange&& rightRange) {
     return ZipViewFactory<RightRange&&>{std::forward<RightRange>(rightRange)};
 }

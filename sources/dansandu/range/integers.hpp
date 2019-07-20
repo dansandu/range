@@ -1,11 +1,11 @@
 #pragma once
 
-#include "summer_school/range/category.hpp"
+#include "dansandu/range/category.hpp"
 
 #include <iterator>
 #include <limits>
 
-namespace summer_school::range::integers {
+namespace dansandu::range::integers {
 
 class IntegersIterator {
 public:
@@ -49,7 +49,7 @@ inline auto operator!=(IntegersIterator a, IntegersIterator b) { return !(a == b
 
 class IntegersGenerator {
 public:
-    using range_category = summer_school::range::category::generator_tag;
+    using range_category = dansandu::range::category::generator_tag;
     using const_iterator = IntegersIterator;
     using iterator = IntegersIterator;
     using value_type = IntegersIterator::value_type;

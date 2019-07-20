@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <vector>
 
-namespace summer_school::range::category {
+namespace dansandu::range::category {
 
 struct container_tag {};
 

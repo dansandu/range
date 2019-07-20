@@ -1,10 +1,10 @@
 #include "catchorg/catch/catch.hpp"
-#include "summer_school/range/integers.hpp"
+#include "dansandu/range/integers.hpp"
 
 #include <vector>
 
-using summer_school::range::integers::integers;
-using summer_school::range::category::operator|;
+using dansandu::range::integers::integers;
+using dansandu::range::category::operator|;
 
 TEST_CASE("Integers") {
     SECTION("natural numbers") {

@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-namespace summer_school::range::storage {
+namespace dansandu::range::storage {
 
 enum class Store { pointer, move };
 

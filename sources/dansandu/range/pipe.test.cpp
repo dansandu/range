@@ -1,16 +1,16 @@
 #include "catchorg/catch/catch.hpp"
-#include "summer_school/range/integers.hpp"
-#include "summer_school/range/take.hpp"
-#include "summer_school/range/zip.hpp"
+#include "dansandu/range/integers.hpp"
+#include "dansandu/range/take.hpp"
+#include "dansandu/range/zip.hpp"
 
 #include <string_view>
 #include <utility>
 #include <vector>
 
-using summer_school::range::integers::integers;
-using summer_school::range::take::take;
-using summer_school::range::zip::zip;
-using summer_school::range::category::operator|;
+using dansandu::range::integers::integers;
+using dansandu::range::take::take;
+using dansandu::range::zip::zip;
+using dansandu::range::category::operator|;
 using std::string_view_literals::operator""sv;
 
 TEST_CASE("Pipe") {

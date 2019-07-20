@@ -1,13 +1,13 @@
 #pragma once
 
-#include "summer_school/range/category.hpp"
-#include "summer_school/range/storage.hpp"
+#include "dansandu/range/category.hpp"
+#include "dansandu/range/storage.hpp"
 
 #include <iterator>
 #include <type_traits>
 #include <utility>
 
-namespace summer_school::range::take {
+namespace dansandu::range::take {
 
 template<typename Iterator>
 class TakeIterator {
@@ -65,8 +65,8 @@ auto operator!=(TakeIterator<Iterator> a, TakeIterator<Iterator> b) {
 template<typename InputRange>
 class TakeView {
 public:
-    using range_category = summer_school::range::category::view_tag;
-    using range_storage_type = summer_school::range::storage::Storage<InputRange>;
+    using range_category = dansandu::range::category::view_tag;
+    using range_storage_type = dansandu::range::storage::Storage<InputRange>;
     using const_iterator = TakeIterator<typename range_storage_type::const_iterator>;
     using iterator = const_iterator;
 
@@ -97,7 +97,7 @@ private:
 
 class TakeViewFactory {
 public:
-    using range_factory_category = summer_school::range::category::view_factory_tag;
+    using range_factory_category = dansandu::range::category::view_factory_tag;
 
     explicit TakeViewFactory(int elementsToTake) : elementsToTake_{elementsToTake} {}
 

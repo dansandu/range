@@ -1,12 +1,12 @@
 #include "catchorg/catch/catch.hpp"
-#include "summer_school/range/take.hpp"
+#include "dansandu/range/take.hpp"
 
 #include <string_view>
 #include <utility>
 #include <vector>
 
-using summer_school::range::take::take;
-using summer_school::range::category::operator|;
+using dansandu::range::take::take;
+using dansandu::range::category::operator|;
 using std::string_view_literals::operator""sv;
 
 TEST_CASE("Take") {
