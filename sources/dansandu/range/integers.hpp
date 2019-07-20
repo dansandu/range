@@ -59,11 +59,11 @@ public:
 
     IntegersGenerator(const IntegersGenerator&) = delete;
 
-    IntegersGenerator(IntegersGenerator&&) = default;
+    IntegersGenerator(IntegersGenerator&&) noexcept = default;
 
     IntegersGenerator& operator=(const IntegersGenerator&) = delete;
 
-    IntegersGenerator& operator=(IntegersGenerator&&) = default;
+    IntegersGenerator& operator=(IntegersGenerator&&) noexcept = default;
 
     auto cbegin() const { return const_iterator{start_, step_}; }
 

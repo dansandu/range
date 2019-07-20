@@ -31,11 +31,11 @@ public:
 
     ZipIterator(const ZipIterator&) = default;
 
-    ZipIterator(ZipIterator&&) noexcept = default;
+    ZipIterator(ZipIterator&&) = default;
 
     ZipIterator& operator=(const ZipIterator&) = default;
 
-    ZipIterator& operator=(ZipIterator&&) noexcept = default;
+    ZipIterator& operator=(ZipIterator&&) = default;
 
     ZipIterator& operator++() {
         if (leftPosition_ != leftEnd_ && rightPosition_ != rightEnd_) {
@@ -82,11 +82,11 @@ public:
 
     ZipView(const ZipView&) = delete;
 
-    ZipView(ZipView&&) noexcept = default;
+    ZipView(ZipView&&) = default;
 
     ZipView& operator=(const ZipView&) = delete;
 
-    ZipView& operator=(ZipView&&) noexcept = default;
+    ZipView& operator=(ZipView&&) = default;
 
     auto cbegin() const {
         return iterator{leftRange_.cbegin(), leftRange_.cend(), rightRange_.cbegin(), rightRange_.cend()};

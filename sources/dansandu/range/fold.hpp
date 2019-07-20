@@ -20,11 +20,11 @@ public:
 
     FoldReductionFactory(const FoldReductionFactory&) = delete;
 
-    FoldReductionFactory(FoldReductionFactory&&) noexcept = default;
+    FoldReductionFactory(FoldReductionFactory&&) = default;
 
     FoldReductionFactory& operator=(const FoldReductionFactory&) = delete;
 
-    FoldReductionFactory& operator=(FoldReductionFactory&&) noexcept = default;
+    FoldReductionFactory& operator=(FoldReductionFactory&&) = default;
 
     template<typename InputRange>
     auto create(InputRange&& inputRange) && {

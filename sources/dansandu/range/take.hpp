@@ -28,11 +28,11 @@ public:
 
     TakeIterator(const TakeIterator&) = default;
 
-    TakeIterator(TakeIterator&&) noexcept = default;
+    TakeIterator(TakeIterator&&) = default;
 
     TakeIterator& operator=(const TakeIterator&) = default;
 
-    TakeIterator& operator=(TakeIterator&&) noexcept = default;
+    TakeIterator& operator=(TakeIterator&&) = default;
 
     auto& operator++() {
         if (elementsTaken_ < elementsToTake_) {
@@ -76,11 +76,11 @@ public:
 
     TakeView(const TakeView&) = delete;
 
-    TakeView(TakeView&&) noexcept = default;
+    TakeView(TakeView&&) = default;
 
     TakeView& operator=(const TakeView&) = delete;
 
-    TakeView& operator=(TakeView&&) noexcept = default;
+    TakeView& operator=(TakeView&&) = default;
 
     auto cbegin() const { return iterator{inputRange_.cbegin(), inputRange_.cend(), elementsToTake_}; }
 

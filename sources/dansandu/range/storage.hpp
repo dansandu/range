@@ -41,11 +41,11 @@ public:
 
     Storage(const Storage&) = default;
 
-    Storage(Storage&&) noexcept = default;
+    Storage(Storage&&) = default;
 
     Storage& operator=(const Storage&) = default;
 
-    Storage& operator=(Storage&&) noexcept = default;
+    Storage& operator=(Storage&&) = default;
 
     iterator cbegin() const { return range_.cbegin(); }
 
