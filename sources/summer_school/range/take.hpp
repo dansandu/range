@@ -101,6 +101,14 @@ public:
 
     explicit TakeViewFactory(int elementsToTake) : elementsToTake_{elementsToTake} {}
 
+    TakeViewFactory(const TakeViewFactory&) = delete;
+
+    TakeViewFactory(TakeViewFactory&&) = default;
+
+    TakeViewFactory& operator=(const TakeViewFactory&) = delete;
+
+    TakeViewFactory& operator=(TakeViewFactory&&) = default;
+
     template<typename InputRange>
     auto create(InputRange&& inputRange) && {
         return TakeView<InputRange&&>{std::forward<InputRange>(inputRange), elementsToTake_};

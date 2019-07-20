@@ -109,6 +109,14 @@ public:
     explicit ZipViewFactory(RightRangeForward&& rightRange)
         : rightRange_{std::forward<RightRangeForward>(rightRange)} {}
 
+    ZipViewFactory(const ZipViewFactory&) = delete;
+
+    ZipViewFactory(ZipViewFactory&&) = default;
+
+    ZipViewFactory& operator=(const ZipViewFactory&) = delete;
+
+    ZipViewFactory& operator=(ZipViewFactory&&) = default;
+
     template<typename LeftRange>
     auto create(LeftRange&& leftRange) && {
         return ZipView<LeftRange&&, RightRange&&>{std::forward<LeftRange>(leftRange), std::move(rightRange_)};
