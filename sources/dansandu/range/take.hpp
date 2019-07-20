@@ -12,7 +12,7 @@ namespace dansandu::range::take {
 template<typename Iterator>
 class TakeIterator {
 public:
-    friend auto operator==(TakeIterator a, TakeIterator b) {
+    friend auto operator==(const TakeIterator& a, const TakeIterator& b) {
         return a.position_ == b.position_ ||
                (a.elementsTaken_ == a.elementsToTake_ && b.elementsTaken_ == b.elementsToTake_);
     }
@@ -24,7 +24,7 @@ public:
     using difference_type = long long;
 
     TakeIterator(Iterator position, Iterator end, int elementsToTake)
-        : position_{position}, end_{end}, elementsTaken_{0}, elementsToTake_{elementsToTake} {}
+        : position_{std::move(position)}, end_{std::move(end)}, elementsTaken_{0}, elementsToTake_{elementsToTake} {}
 
     TakeIterator(const TakeIterator&) = default;
 
@@ -58,7 +58,7 @@ private:
 };
 
 template<typename Iterator>
-auto operator!=(TakeIterator<Iterator> a, TakeIterator<Iterator> b) {
+auto operator!=(const TakeIterator<Iterator>& a, const TakeIterator<Iterator>& b) {
     return !(a == b);
 }
 

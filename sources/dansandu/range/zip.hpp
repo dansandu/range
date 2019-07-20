@@ -12,7 +12,7 @@ namespace dansandu::range::zip {
 template<typename LeftIterator, typename RightIterator>
 class ZipIterator {
 public:
-    friend bool operator==(ZipIterator a, ZipIterator b) {
+    friend bool operator==(const ZipIterator& a, const ZipIterator& b) {
         return a.leftPosition_ == b.leftPosition_ || a.rightPosition_ == b.rightPosition_;
     }
 
@@ -24,7 +24,10 @@ public:
     using difference_type = long long;
 
     ZipIterator(LeftIterator leftPosition, LeftIterator leftEnd, RightIterator rightPosition, RightIterator rightEnd)
-        : leftPosition_{leftPosition}, leftEnd_{leftEnd}, rightPosition_{rightPosition}, rightEnd_{rightEnd} {}
+        : leftPosition_{std::move(leftPosition)},
+          leftEnd_{std::move(leftEnd)},
+          rightPosition_{std::move(rightPosition)},
+          rightEnd_{std::move(rightEnd)} {}
 
     ZipIterator(const ZipIterator&) = default;
 
@@ -58,7 +61,7 @@ private:
 };
 
 template<typename LeftIterator, typename RightIterator>
-bool operator!=(ZipIterator<LeftIterator, RightIterator> a, ZipIterator<LeftIterator, RightIterator> b) {
+bool operator!=(const ZipIterator<LeftIterator, RightIterator>& a, const ZipIterator<LeftIterator, RightIterator>& b) {
     return !(a == b);
 }
 
