@@ -3,7 +3,6 @@
 #include "dansandu/range/category.hpp"
 #include "dansandu/range/storage.hpp"
 
-#include <iostream>
 #include <iterator>
 #include <type_traits>
 
