@@ -1,4 +1,5 @@
 #include "catchorg/catch/catch.hpp"
+#include "dansandu/range/pipe.hpp"
 #include "dansandu/range/take.hpp"
 
 #include <string_view>
@@ -6,8 +7,7 @@
 #include <vector>
 
 using dansandu::range::take::take;
-using dansandu::range::category::operator|;
-using std::string_view_literals::operator""sv;
+using dansandu::range::pipe::operator|;
 
 TEST_CASE("Take") {
     std::vector<std::string_view> names = {"Beatrice", "Michael", "Lisa"};
@@ -25,13 +25,13 @@ TEST_CASE("Take") {
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == "Beatrice"sv);
+        REQUIRE(*iterator == "Beatrice");
 
         ++iterator;
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == "Michael"sv);
+        REQUIRE(*iterator == "Michael");
 
         ++iterator;
 
@@ -45,19 +45,19 @@ TEST_CASE("Take") {
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == "Beatrice"sv);
+        REQUIRE(*iterator == "Beatrice");
 
         ++iterator;
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == "Michael"sv);
+        REQUIRE(*iterator == "Michael");
 
         ++iterator;
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == "Lisa"sv);
+        REQUIRE(*iterator == "Lisa");
 
         ++iterator;
 
@@ -71,19 +71,19 @@ TEST_CASE("Take") {
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == "Beatrice"sv);
+        REQUIRE(*iterator == "Beatrice");
 
         ++iterator;
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == "Michael"sv);
+        REQUIRE(*iterator == "Michael");
 
         ++iterator;
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == "Lisa"sv);
+        REQUIRE(*iterator == "Lisa");
 
         ++iterator;
 

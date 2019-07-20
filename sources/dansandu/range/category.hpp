@@ -66,10 +66,4 @@ inline constexpr bool is_pipe_head = is_pipe_head_wrapper<typename std::decay_t<
 template<typename Type>
 inline constexpr bool is_range_factory = is_range_factory_wrapper<typename std::decay_t<Type>>::getValue(best_case{});
 
-template<typename InputRange, typename RangeFactory,
-         typename = std::enable_if_t<is_pipe_head<InputRange> && is_range_factory<RangeFactory>>>
-auto operator|(InputRange&& inputRange, RangeFactory&& rangeFactory) {
-    return std::forward<RangeFactory>(rangeFactory).create(std::forward<InputRange>(inputRange));
-}
-
 }

@@ -1,5 +1,6 @@
 #include "catchorg/catch/catch.hpp"
 #include "dansandu/range/integers.hpp"
+#include "dansandu/range/pipe.hpp"
 #include "dansandu/range/take.hpp"
 #include "dansandu/range/zip.hpp"
 
@@ -10,8 +11,7 @@
 using dansandu::range::integers::integers;
 using dansandu::range::take::take;
 using dansandu::range::zip::zip;
-using dansandu::range::category::operator|;
-using std::string_view_literals::operator""sv;
+using dansandu::range::pipe::operator|;
 
 TEST_CASE("Pipe") {
     std::vector<std::string_view> names = {"Timmy", "Marie", "Billy"};

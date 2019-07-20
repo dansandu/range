@@ -1,10 +1,11 @@
 #include "catchorg/catch/catch.hpp"
 #include "dansandu/range/integers.hpp"
+#include "dansandu/range/pipe.hpp"
 
 #include <vector>
 
 using dansandu::range::integers::integers;
-using dansandu::range::category::operator|;
+using dansandu::range::pipe::operator|;
 
 TEST_CASE("Integers") {
     SECTION("natural numbers") {

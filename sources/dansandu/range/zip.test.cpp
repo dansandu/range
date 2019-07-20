@@ -1,4 +1,5 @@
 #include "catchorg/catch/catch.hpp"
+#include "dansandu/range/pipe.hpp"
 #include "dansandu/range/zip.hpp"
 
 #include <string_view>
@@ -6,7 +7,7 @@
 #include <vector>
 
 using dansandu::range::zip::zip;
-using dansandu::range::category::operator|;
+using dansandu::range::pipe::operator|;
 using std::string_view_literals::operator""sv;
 
 TEST_CASE("Zip") {

@@ -1,12 +1,12 @@
 #include "catchorg/catch/catch.hpp"
-#include "dansandu/range/category.hpp"
 #include "dansandu/range/fold.hpp"
+#include "dansandu/range/pipe.hpp"
 
 #include <string>
 #include <vector>
 
 using dansandu::range::fold::fold;
-using dansandu::range::category::operator|;
+using dansandu::range::pipe::operator|;
 
 TEST_CASE("Fold") {
     auto add = [](const auto& a, const auto& b) { return a + b; };
