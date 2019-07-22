@@ -19,7 +19,7 @@ TEST_CASE("Filter") {
         REQUIRE(actual == std::vector<int>{{0, 2, 4}});
     }
 
-    SECTION("non-empty range") {
+    SECTION("empty range") {
         auto range = std::vector<int>{} | filter(isEven);
 
         REQUIRE(range.begin() == range.end());

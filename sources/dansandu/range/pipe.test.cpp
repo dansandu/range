@@ -3,6 +3,7 @@
 #include "dansandu/range/fold.hpp"
 #include "dansandu/range/integers.hpp"
 #include "dansandu/range/pipe.hpp"
+#include "dansandu/range/repeat.hpp"
 #include "dansandu/range/take.hpp"
 #include "dansandu/range/zip.hpp"
 
@@ -16,13 +17,14 @@ using dansandu::range::integers::integers;
 using dansandu::range::take::take;
 using dansandu::range::zip::zip;
 using dansandu::range::pipe::operator|;
+using dansandu::range::repeat::repeat;
 
 TEST_CASE("Pipe") {
     auto names = std::vector<const char*>{"Timmy", "Marie", "Billy", "Eddie", "Kate"};
     auto ages = std::vector<int>{23, 33, 30, 20, 18};
 
-    auto result = names | zip(ages) | filter([](auto p) { return p.second < 25; }) | take(2) |
+    auto result = names | zip(ages) | filter([](auto p) { return p.second < 25; }) | repeat() | take(9) |
                   fold(std::string{}, [](const auto& s, auto p) { return s + p.first; });
 
-    REQUIRE(result == "TimmyEddie");
+    REQUIRE(result == "TimmyEddieKateTimmyEddieKateTimmyEddieKate");
 }
