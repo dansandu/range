@@ -19,7 +19,7 @@ public:
     using reference = value_type&;
     using difference_type = long long;
 
-    friend bool operator==(const ZipIterator& a, const ZipIterator& b) {
+    friend auto operator==(const ZipIterator& a, const ZipIterator& b) {
         return a.leftPosition_ == b.leftPosition_ || a.rightPosition_ == b.rightPosition_;
     }
 
@@ -61,7 +61,7 @@ private:
 };
 
 template<typename LeftIterator, typename RightIterator>
-bool operator!=(const ZipIterator<LeftIterator, RightIterator>& a, const ZipIterator<LeftIterator, RightIterator>& b) {
+auto operator!=(const ZipIterator<LeftIterator, RightIterator>& a, const ZipIterator<LeftIterator, RightIterator>& b) {
     return !(a == b);
 }
 

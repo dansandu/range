@@ -22,9 +22,6 @@ public:
     FilterIterator(InputIterator position, InputIterator end, PredicatePointer predicate)
         : position_{std::move(position)}, end_{std::move(end)}, predicate_{predicate} {}
 
-    FilterIterator(InputIterator position, InputIterator end)
-        : position_{std::move(position)}, end_{std::move(end)}, predicate_{nullptr} {}
-
     FilterIterator(const FilterIterator&) = default;
 
     FilterIterator(FilterIterator&&) = default;
@@ -91,7 +88,7 @@ public:
             return const_iterator{inputRange_.cbegin(), inputRange_.cend(), &predicate_};
     }
 
-    auto cend() const { return const_iterator{inputRange_.cend(), inputRange_.cend()}; }
+    auto cend() const { return const_iterator{inputRange_.cend(), inputRange_.cend(), nullptr}; }
 
     auto begin() const { return cbegin(); }
 

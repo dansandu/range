@@ -1,12 +1,15 @@
 #pragma once
 
+#include "dansandu/range/category.hpp"
+
 #include <type_traits>
 
 namespace dansandu::range::storage {
 
 enum class Store { pointer, move };
 
-template<typename Range, Store = std::is_lvalue_reference_v<Range> ? Store::pointer : Store::move>
+template<typename Range, Store = std::is_lvalue_reference_v<Range> ? Store::pointer : Store::move,
+         typename = std::enable_if_t<dansandu::range::category::is_pipe_head<Range>>>
 class Storage;
 
 template<typename Range>

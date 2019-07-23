@@ -18,11 +18,9 @@ public:
     using reference = value_type&;
     using pointer = value_type*;
 
-    friend bool operator==(const MapIterator& a, const MapIterator& b) { return a.position_ == b.position_; }
+    friend auto operator==(const MapIterator& a, const MapIterator& b) { return a.position_ == b.position_; }
 
     MapIterator(InputIterator position, MappingPointer mapping) : position_{std::move(position)}, mapping_{mapping} {}
-
-    explicit MapIterator(InputIterator position) : position_{std::move(position)}, mapping_{nullptr} {}
 
     MapIterator(const MapIterator&) = default;
 
@@ -51,7 +49,7 @@ private:
 };
 
 template<typename InputIterator, typename Mapping>
-bool operator!=(const MapIterator<InputIterator, Mapping>& a, const MapIterator<InputIterator, Mapping>& b) {
+auto operator!=(const MapIterator<InputIterator, Mapping>& a, const MapIterator<InputIterator, Mapping>& b) {
     return !(a == b);
 }
 
@@ -83,7 +81,7 @@ public:
             return const_iterator{storage_.cbegin(), &mapping_};
     }
 
-    auto cend() const { return const_iterator{storage_.cend()}; }
+    auto cend() const { return const_iterator{storage_.cend(), nullptr}; }
 
     auto begin() const { return cbegin(); }
 
