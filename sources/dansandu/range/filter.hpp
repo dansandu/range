@@ -8,10 +8,9 @@
 
 namespace dansandu::range::filter {
 
-template<typename Iterator, typename Predicate>
+template<typename Iterator, typename PredicatePointer>
 class FilterIterator {
 public:
-    using range_category = dansandu::range::category::view_tag;
     using iterator_category = std::input_iterator_tag;
     using value_type = std::decay_t<decltype(*std::declval<Iterator>())>;
     using pointer = value_type*;
@@ -20,7 +19,7 @@ public:
 
     friend auto operator==(const FilterIterator& a, const FilterIterator& b) { return a.position_ == b.position_; }
 
-    FilterIterator(Iterator position, Iterator end, Predicate* predicate)
+    FilterIterator(Iterator position, Iterator end, PredicatePointer predicate)
         : position_{std::move(position)}, end_{std::move(end)}, predicate_{predicate} {}
 
     FilterIterator(Iterator position, Iterator end)
@@ -55,7 +54,7 @@ public:
 private:
     Iterator position_;
     Iterator end_;
-    Predicate* predicate_;
+    PredicatePointer predicate_;
 };
 
 template<typename Iterator, typename Predicate>
@@ -68,7 +67,8 @@ class FilterView {
 public:
     using range_category = dansandu::range::category::view_tag;
     using range_storage_type = dansandu::range::storage::Storage<InputRange>;
-    using const_iterator = FilterIterator<typename range_storage_type::const_iterator, Predicate>;
+    using predicate_pointer = std::conditional_t<std::is_pointer_v<Predicate>, Predicate, Predicate*>;
+    using const_iterator = FilterIterator<typename range_storage_type::const_iterator, predicate_pointer>;
     using iterator = const_iterator;
 
     template<typename InputRangeForward, typename PredicateForward>
@@ -84,7 +84,12 @@ public:
 
     FilterView& operator=(FilterView&&) = default;
 
-    auto cbegin() const { return iterator{inputRange_.cbegin(), inputRange_.cend(), &predicate_}; }
+    auto cbegin() const {
+        if constexpr (std::is_pointer_v<Predicate>)
+            return iterator{inputRange_.cbegin(), inputRange_.cend(), predicate_};
+        else
+            return iterator{inputRange_.cbegin(), inputRange_.cend(), &predicate_};
+    }
 
     auto cend() const { return iterator{inputRange_.cend(), inputRange_.cend()}; }
 
@@ -101,7 +106,7 @@ template<typename Predicate>
 class FilterViewFactory {
 public:
     using range_factory_category = dansandu::range::category::view_factory_tag;
-    using predicate_type = typename std::remove_pointer_t<typename std::decay_t<Predicate>>;
+    using predicate_type = typename std::decay_t<Predicate>;
 
     template<typename PredicateForward>
     explicit FilterViewFactory(PredicateForward&& predicate) : predicate_{std::forward<PredicateForward>(predicate)} {}
