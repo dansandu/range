@@ -12,16 +12,16 @@ namespace dansandu::range::zip {
 template<typename LeftIterator, typename RightIterator>
 class ZipIterator {
 public:
-    friend bool operator==(const ZipIterator& a, const ZipIterator& b) {
-        return a.leftPosition_ == b.leftPosition_ || a.rightPosition_ == b.rightPosition_;
-    }
-
     using iterator_category = std::input_iterator_tag;
     using value_type = std::pair<std::decay_t<decltype(*std::declval<LeftIterator>())>,
                                  std::decay_t<decltype(*std::declval<RightIterator>())>>;
     using pointer = value_type*;
     using reference = value_type&;
     using difference_type = long long;
+
+    friend bool operator==(const ZipIterator& a, const ZipIterator& b) {
+        return a.leftPosition_ == b.leftPosition_ || a.rightPosition_ == b.rightPosition_;
+    }
 
     ZipIterator(LeftIterator leftPosition, LeftIterator leftEnd, RightIterator rightPosition, RightIterator rightEnd)
         : leftPosition_{std::move(leftPosition)},
@@ -66,63 +66,62 @@ bool operator!=(const ZipIterator<LeftIterator, RightIterator>& a, const ZipIter
 }
 
 template<typename LeftRange, typename RightRange>
-struct ZipView {
+struct ZipRange {
 public:
     using range_category = dansandu::range::category::view_tag;
-    using left_range_storage_type = dansandu::range::storage::Storage<LeftRange>;
-    using right_range_storage_type = dansandu::range::storage::Storage<RightRange>;
-    using const_iterator = ZipIterator<typename left_range_storage_type::const_iterator,
-                                       typename right_range_storage_type::const_iterator>;
+    using left_range_storage = dansandu::range::storage::Storage<LeftRange>;
+    using right_range_storage = dansandu::range::storage::Storage<RightRange>;
+    using const_iterator =
+        ZipIterator<typename left_range_storage::const_iterator, typename right_range_storage::const_iterator>;
     using iterator = const_iterator;
 
     template<typename LeftRangeForward, typename RightRangeForward>
-    ZipView(LeftRangeForward&& leftRange, RightRangeForward&& rightRange)
+    ZipRange(LeftRangeForward&& leftRange, RightRangeForward&& rightRange)
         : leftRange_{std::forward<LeftRangeForward>(leftRange)},
           rightRange_{std::forward<RightRangeForward>(rightRange)} {}
 
-    ZipView(const ZipView&) = delete;
+    ZipRange(const ZipRange&) = delete;
 
-    ZipView(ZipView&&) = default;
+    ZipRange(ZipRange&&) = default;
 
-    ZipView& operator=(const ZipView&) = delete;
+    ZipRange& operator=(const ZipRange&) = delete;
 
-    ZipView& operator=(ZipView&&) = default;
+    ZipRange& operator=(ZipRange&&) = default;
 
     auto cbegin() const {
-        return iterator{leftRange_.cbegin(), leftRange_.cend(), rightRange_.cbegin(), rightRange_.cend()};
+        return const_iterator{leftRange_.cbegin(), leftRange_.cend(), rightRange_.cbegin(), rightRange_.cend()};
     }
 
-    auto cend() const { return iterator{leftRange_.cend(), leftRange_.cend(), rightRange_.cend(), rightRange_.cend()}; }
+    auto cend() const {
+        return const_iterator{leftRange_.cend(), leftRange_.cend(), rightRange_.cend(), rightRange_.cend()};
+    }
 
     auto begin() const { return cbegin(); }
 
     auto end() const { return cend(); }
 
 private:
-    left_range_storage_type leftRange_;
-    right_range_storage_type rightRange_;
+    left_range_storage leftRange_;
+    right_range_storage rightRange_;
 };
 
 template<typename RightRange>
-class ZipViewFactory {
+class ZipBinder : public dansandu::range::category::range_binder_tag {
 public:
-    using range_factory_category = dansandu::range::category::view_factory_tag;
-
     template<typename RightRangeForward>
-    explicit ZipViewFactory(RightRangeForward&& rightRange)
-        : rightRange_{std::forward<RightRangeForward>(rightRange)} {}
+    explicit ZipBinder(RightRangeForward&& rightRange) : rightRange_{std::forward<RightRangeForward>(rightRange)} {}
 
-    ZipViewFactory(const ZipViewFactory&) = delete;
+    ZipBinder(const ZipBinder&) = delete;
 
-    ZipViewFactory(ZipViewFactory&&) = default;
+    ZipBinder(ZipBinder&&) = default;
 
-    ZipViewFactory& operator=(const ZipViewFactory&) = delete;
+    ZipBinder& operator=(const ZipBinder&) = delete;
 
-    ZipViewFactory& operator=(ZipViewFactory&&) = default;
+    ZipBinder& operator=(ZipBinder&&) = default;
 
     template<typename LeftRange>
-    auto create(LeftRange&& leftRange) && {
-        return ZipView<LeftRange&&, RightRange&&>{std::forward<LeftRange>(leftRange), std::move(rightRange_)};
+    auto bind(LeftRange&& leftRange) && {
+        return ZipRange<LeftRange&&, RightRange&&>{std::forward<LeftRange>(leftRange), std::move(rightRange_)};
     }
 
 private:
@@ -131,7 +130,7 @@ private:
 
 template<typename RightRange, typename = std::enable_if_t<dansandu::range::category::is_pipe_head<RightRange>>>
 auto zip(RightRange&& rightRange) {
-    return ZipViewFactory<RightRange&&>{std::forward<RightRange>(rightRange)};
+    return ZipBinder<RightRange&&>{std::forward<RightRange>(rightRange)};
 }
 
 }

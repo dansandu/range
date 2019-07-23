@@ -6,10 +6,9 @@
 using dansandu::range::category::container_tag;
 using dansandu::range::category::generator_tag;
 using dansandu::range::category::is_pipe_head;
-using dansandu::range::category::is_range_factory;
-using dansandu::range::category::reduction_factory_tag;
+using dansandu::range::category::is_range_binder;
+using dansandu::range::category::range_binder_tag;
 using dansandu::range::category::reduction_tag;
-using dansandu::range::category::view_factory_tag;
 using dansandu::range::category::view_tag;
 
 struct ContainerMock {
@@ -28,13 +27,7 @@ struct ReductionMock {
     using range_category = reduction_tag;
 };
 
-struct ViewFactoryMock {
-    using range_factory_category = view_factory_tag;
-};
-
-struct ReductionFactoryMock {
-    using range_factory_category = reduction_factory_tag;
-};
+struct RangeBinderMock : range_binder_tag {};
 
 TEST_CASE("Category") {
     SECTION("pipe head") {
@@ -46,26 +39,28 @@ TEST_CASE("Category") {
 
         REQUIRE(is_pipe_head<ViewMock>);
 
+        REQUIRE(is_pipe_head<std::vector<double>>);
+
         REQUIRE(!is_pipe_head<ReductionMock>);
 
-        REQUIRE(!is_pipe_head<ViewFactoryMock>);
+        REQUIRE(!is_pipe_head<RangeBinderMock>);
 
-        REQUIRE(!is_pipe_head<ReductionFactoryMock>);
+        REQUIRE(!is_pipe_head<double>);
     }
 
-    SECTION("range factory") {
-        REQUIRE(is_range_factory<ViewFactoryMock>);
+    SECTION("range binder") {
+        REQUIRE(is_range_binder<RangeBinderMock>);
 
-        REQUIRE(is_range_factory<ReductionFactoryMock>);
+        REQUIRE(!is_range_binder<ContainerMock>);
 
-        REQUIRE(!is_range_factory<ContainerMock>);
+        REQUIRE(!is_range_binder<GeneratorMock>);
 
-        REQUIRE(!is_range_factory<GeneratorMock>);
+        REQUIRE(!is_range_binder<ViewMock>);
 
-        REQUIRE(!is_range_factory<ViewMock>);
+        REQUIRE(!is_range_binder<ReductionMock>);
 
-        REQUIRE(!is_range_factory<ReductionMock>);
+        REQUIRE(!is_range_binder<std::vector<const char*>>);
 
-        REQUIRE(!is_range_factory<std::vector<int>>);
+        REQUIRE(!is_range_binder<const char*>);
     }
 }

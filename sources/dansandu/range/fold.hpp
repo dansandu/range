@@ -7,28 +7,27 @@
 namespace dansandu::range::fold {
 
 template<typename InitialValue, typename Folder>
-class FoldReductionFactory {
+class FoldBinder : public dansandu::range::category::range_binder_tag {
 public:
-    using range_factory_category = dansandu::range::category::reduction_factory_tag;
     using value_type = typename std::decay_t<InitialValue>;
     using folder_type = typename std::decay_t<Folder>;
 
     template<typename InitialValueForward, typename FolderForward>
-    explicit FoldReductionFactory(InitialValueForward&& initialValue, FolderForward&& folder)
+    explicit FoldBinder(InitialValueForward&& initialValue, FolderForward&& folder)
         : initialValue_{std::forward<InitialValueForward>(initialValue)},
           folder_{std::forward<FolderForward>(folder)} {}
 
-    FoldReductionFactory(const FoldReductionFactory&) = delete;
+    FoldBinder(const FoldBinder&) = delete;
 
-    FoldReductionFactory(FoldReductionFactory&&) = default;
+    FoldBinder(FoldBinder&&) = default;
 
-    FoldReductionFactory& operator=(const FoldReductionFactory&) = delete;
+    FoldBinder& operator=(const FoldBinder&) = delete;
 
-    FoldReductionFactory& operator=(FoldReductionFactory&&) = default;
+    FoldBinder& operator=(FoldBinder&&) = default;
 
     template<typename InputRange>
-    auto create(InputRange&& inputRange) && {
-        for (auto element : inputRange)
+    auto bind(InputRange&& inputRange) && {
+        for (const auto& element : inputRange)
             initialValue_ = folder_(initialValue_, element);
         return std::move(initialValue_);
     }
@@ -40,8 +39,7 @@ private:
 
 template<typename InitialValue, typename Folder>
 auto fold(InitialValue&& initialValue, Folder&& folder) {
-    return FoldReductionFactory<InitialValue&&, Folder&&>(std::forward<InitialValue>(initialValue),
-                                                          std::forward<Folder>(folder));
+    return FoldBinder<InitialValue&&, Folder&&>(std::forward<InitialValue>(initialValue), std::forward<Folder>(folder));
 }
 
 }

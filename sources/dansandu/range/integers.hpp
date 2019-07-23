@@ -47,23 +47,22 @@ inline auto operator==(IntegersIterator a, IntegersIterator b) { return *a == *b
 
 inline auto operator!=(IntegersIterator a, IntegersIterator b) { return !(a == b); }
 
-class IntegersGenerator {
+class IntegersRange {
 public:
     using range_category = dansandu::range::category::generator_tag;
     using const_iterator = IntegersIterator;
     using iterator = IntegersIterator;
     using value_type = IntegersIterator::value_type;
 
-    IntegersGenerator(value_type start, value_type step, value_type count)
-        : start_{start}, step_{step}, count_{count} {}
+    IntegersRange(value_type start, value_type step, value_type count) : start_{start}, step_{step}, count_{count} {}
 
-    IntegersGenerator(const IntegersGenerator&) = delete;
+    IntegersRange(const IntegersRange&) = delete;
 
-    IntegersGenerator(IntegersGenerator&&) noexcept = default;
+    IntegersRange(IntegersRange&&) noexcept = default;
 
-    IntegersGenerator& operator=(const IntegersGenerator&) = delete;
+    IntegersRange& operator=(const IntegersRange&) = delete;
 
-    IntegersGenerator& operator=(IntegersGenerator&&) noexcept = default;
+    IntegersRange& operator=(IntegersRange&&) noexcept = default;
 
     auto cbegin() const { return const_iterator{start_, step_}; }
 
@@ -79,22 +78,21 @@ private:
     value_type count_;
 };
 
-inline auto integers(IntegersGenerator::value_type start, IntegersGenerator::value_type step,
-                     IntegersGenerator::value_type count) {
-    return IntegersGenerator{start, step, count};
+inline auto integers(IntegersRange::value_type start, IntegersRange::value_type step, IntegersRange::value_type count) {
+    return IntegersRange{start, step, count};
 }
 
-inline auto integers(IntegersGenerator::value_type start, IntegersGenerator::value_type step) {
+inline auto integers(IntegersRange::value_type start, IntegersRange::value_type step) {
     using safe_type = long long;
-    static_assert(sizeof(IntegersGenerator::value_type) < sizeof(safe_type));
-    auto count = static_cast<IntegersGenerator::value_type>(
-        (static_cast<safe_type>(std::numeric_limits<IntegersGenerator::value_type>::max()) -
+    static_assert(sizeof(IntegersRange::value_type) < sizeof(safe_type));
+    auto count = static_cast<IntegersRange::value_type>(
+        (static_cast<safe_type>(std::numeric_limits<IntegersRange::value_type>::max()) -
          static_cast<safe_type>(start)) /
         static_cast<safe_type>(step));
-    return IntegersGenerator{start, step, count};
+    return IntegersRange{start, step, count};
 }
 
-inline auto integers(IntegersGenerator::value_type start) { return integers(start, 1); }
+inline auto integers(IntegersRange::value_type start) { return integers(start, 1); }
 
 inline auto integers() { return integers(0, 1); }
 

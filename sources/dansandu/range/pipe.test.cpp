@@ -22,9 +22,10 @@ using dansandu::range::repeat::repeat;
 TEST_CASE("Pipe") {
     auto names = std::vector<const char*>{"Timmy", "Marie", "Billy", "Eddie", "Kate"};
     auto ages = std::vector<int>{23, 33, 30, 20, 18};
+    auto youngerThan25 = [](auto p) { return p.second < 25; };
+    auto folder = [](const auto& s, auto p) { return s + p.first; };
 
-    auto result = names | zip(ages) | filter([](auto p) { return p.second < 25; }) | repeat() | take(9) |
-                  fold(std::string{}, [](const auto& s, auto p) { return s + p.first; });
+    auto range = names | zip(ages) | filter(youngerThan25) | repeat() | take(9) | fold(std::string{}, folder);
 
-    REQUIRE(result == "TimmyEddieKateTimmyEddieKateTimmyEddieKate");
+    REQUIRE(range == "TimmyEddieKateTimmyEddieKateTimmyEddieKate");
 }

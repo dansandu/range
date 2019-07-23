@@ -6,11 +6,11 @@
 
 namespace dansandu::range::pipe {
 
-template<typename InputRange, typename RangeFactory,
+template<typename InputRange, typename RangeBinder,
          typename = std::enable_if_t<dansandu::range::category::is_pipe_head<InputRange> &&
-                                     dansandu::range::category::is_range_factory<RangeFactory>>>
-auto operator|(InputRange&& inputRange, RangeFactory&& rangeFactory) {
-    return std::forward<RangeFactory>(rangeFactory).create(std::forward<InputRange>(inputRange));
+                                     dansandu::range::category::is_range_binder<RangeBinder>>>
+auto operator|(InputRange&& inputRange, RangeBinder&& rangeBinder) {
+    return std::forward<RangeBinder>(rangeBinder).bind(std::forward<InputRange>(inputRange));
 }
 
 }

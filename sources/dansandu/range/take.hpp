@@ -9,21 +9,21 @@
 
 namespace dansandu::range::take {
 
-template<typename Iterator>
+template<typename InputIterator>
 class TakeIterator {
 public:
+    using iterator_category = std::input_iterator_tag;
+    using value_type = std::decay_t<decltype(*std::declval<InputIterator>())>;
+    using pointer = value_type*;
+    using reference = value_type&;
+    using difference_type = long long;
+
     friend auto operator==(const TakeIterator& a, const TakeIterator& b) {
         return a.position_ == b.position_ ||
                (a.elementsTaken_ == a.elementsToTake_ && b.elementsTaken_ == b.elementsToTake_);
     }
 
-    using iterator_category = std::input_iterator_tag;
-    using value_type = std::decay_t<decltype(*std::declval<Iterator>())>;
-    using pointer = value_type*;
-    using reference = value_type&;
-    using difference_type = long long;
-
-    TakeIterator(Iterator position, Iterator end, int elementsToTake)
+    TakeIterator(InputIterator position, InputIterator end, int elementsToTake)
         : position_{std::move(position)}, end_{std::move(end)}, elementsTaken_{0}, elementsToTake_{elementsToTake} {}
 
     TakeIterator(const TakeIterator&) = default;
@@ -51,36 +51,36 @@ public:
     auto operator*() const { return *position_; }
 
 private:
-    Iterator position_;
-    Iterator end_;
+    InputIterator position_;
+    InputIterator end_;
     int elementsTaken_;
     int elementsToTake_;
 };
 
-template<typename Iterator>
-auto operator!=(const TakeIterator<Iterator>& a, const TakeIterator<Iterator>& b) {
+template<typename InputIterator>
+auto operator!=(const TakeIterator<InputIterator>& a, const TakeIterator<InputIterator>& b) {
     return !(a == b);
 }
 
 template<typename InputRange>
-class TakeView {
+class TakeRange {
 public:
     using range_category = dansandu::range::category::view_tag;
-    using range_storage_type = dansandu::range::storage::Storage<InputRange>;
-    using const_iterator = TakeIterator<typename range_storage_type::const_iterator>;
+    using range_storage = dansandu::range::storage::Storage<InputRange>;
+    using const_iterator = TakeIterator<typename range_storage::const_iterator>;
     using iterator = const_iterator;
 
     template<typename InputRangeForward>
-    TakeView(InputRangeForward&& inputRange, int elementsToTake)
+    TakeRange(InputRangeForward&& inputRange, int elementsToTake)
         : inputRange_{std::forward<InputRangeForward>(inputRange)}, elementsToTake_{elementsToTake} {}
 
-    TakeView(const TakeView&) = delete;
+    TakeRange(const TakeRange&) = delete;
 
-    TakeView(TakeView&&) = default;
+    TakeRange(TakeRange&&) = default;
 
-    TakeView& operator=(const TakeView&) = delete;
+    TakeRange& operator=(const TakeRange&) = delete;
 
-    TakeView& operator=(TakeView&&) = default;
+    TakeRange& operator=(TakeRange&&) = default;
 
     auto cbegin() const { return iterator{inputRange_.cbegin(), inputRange_.cend(), elementsToTake_}; }
 
@@ -91,33 +91,31 @@ public:
     auto end() const { return cend(); }
 
 private:
-    range_storage_type inputRange_;
+    range_storage inputRange_;
     int elementsToTake_;
 };
 
-class TakeViewFactory {
+class TakeBinder : public dansandu::range::category::range_binder_tag {
 public:
-    using range_factory_category = dansandu::range::category::view_factory_tag;
+    explicit TakeBinder(int elementsToTake) : elementsToTake_{elementsToTake} {}
 
-    explicit TakeViewFactory(int elementsToTake) : elementsToTake_{elementsToTake} {}
+    TakeBinder(const TakeBinder&) = delete;
 
-    TakeViewFactory(const TakeViewFactory&) = delete;
+    TakeBinder(TakeBinder&&) = default;
 
-    TakeViewFactory(TakeViewFactory&&) = default;
+    TakeBinder& operator=(const TakeBinder&) = delete;
 
-    TakeViewFactory& operator=(const TakeViewFactory&) = delete;
-
-    TakeViewFactory& operator=(TakeViewFactory&&) = default;
+    TakeBinder& operator=(TakeBinder&&) = default;
 
     template<typename InputRange>
-    auto create(InputRange&& inputRange) && {
-        return TakeView<InputRange&&>{std::forward<InputRange>(inputRange), elementsToTake_};
+    auto bind(InputRange&& inputRange) && {
+        return TakeRange<InputRange&&>{std::forward<InputRange>(inputRange), elementsToTake_};
     }
 
 private:
     int elementsToTake_;
 };
 
-inline auto take(int elements) { return TakeViewFactory{elements}; }
+inline auto take(int elements) { return TakeBinder{elements}; }
 
 }

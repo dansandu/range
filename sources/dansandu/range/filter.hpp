@@ -8,21 +8,21 @@
 
 namespace dansandu::range::filter {
 
-template<typename Iterator, typename PredicatePointer>
+template<typename InputIterator, typename PredicatePointer>
 class FilterIterator {
 public:
     using iterator_category = std::input_iterator_tag;
-    using value_type = std::decay_t<decltype(*std::declval<Iterator>())>;
+    using value_type = std::decay_t<decltype(*std::declval<InputIterator>())>;
     using pointer = value_type*;
     using reference = value_type&;
     using difference_type = long long;
 
     friend auto operator==(const FilterIterator& a, const FilterIterator& b) { return a.position_ == b.position_; }
 
-    FilterIterator(Iterator position, Iterator end, PredicatePointer predicate)
+    FilterIterator(InputIterator position, InputIterator end, PredicatePointer predicate)
         : position_{std::move(position)}, end_{std::move(end)}, predicate_{predicate} {}
 
-    FilterIterator(Iterator position, Iterator end)
+    FilterIterator(InputIterator position, InputIterator end)
         : position_{std::move(position)}, end_{std::move(end)}, predicate_{nullptr} {}
 
     FilterIterator(const FilterIterator&) = default;
@@ -52,8 +52,8 @@ public:
     auto operator*() const { return *position_; }
 
 private:
-    Iterator position_;
-    Iterator end_;
+    InputIterator position_;
+    InputIterator end_;
     PredicatePointer predicate_;
 };
 
@@ -63,74 +63,74 @@ auto operator!=(const FilterIterator<Iterator, Predicate>& a, const FilterIterat
 }
 
 template<typename InputRange, typename Predicate>
-class FilterView {
+class FilterRange {
 public:
     using range_category = dansandu::range::category::view_tag;
-    using range_storage_type = dansandu::range::storage::Storage<InputRange>;
+    using range_storage = dansandu::range::storage::Storage<InputRange>;
     using predicate_pointer = std::conditional_t<std::is_pointer_v<Predicate>, Predicate, Predicate*>;
-    using const_iterator = FilterIterator<typename range_storage_type::const_iterator, predicate_pointer>;
+    using const_iterator = FilterIterator<typename range_storage::const_iterator, predicate_pointer>;
     using iterator = const_iterator;
 
     template<typename InputRangeForward, typename PredicateForward>
-    FilterView(InputRangeForward&& inputRange, PredicateForward&& predicate)
+    FilterRange(InputRangeForward&& inputRange, PredicateForward&& predicate)
         : inputRange_{std::forward<InputRangeForward>(inputRange)},
           predicate_{std::forward<PredicateForward>(predicate)} {}
 
-    FilterView(const FilterView&) = delete;
+    FilterRange(const FilterRange&) = delete;
 
-    FilterView(FilterView&&) = default;
+    FilterRange(FilterRange&&) = default;
 
-    FilterView& operator=(const FilterView&) = delete;
+    FilterRange& operator=(const FilterRange&) = delete;
 
-    FilterView& operator=(FilterView&&) = default;
+    FilterRange& operator=(FilterRange&&) = default;
 
     auto cbegin() const {
         if constexpr (std::is_pointer_v<Predicate>)
-            return iterator{inputRange_.cbegin(), inputRange_.cend(), predicate_};
+            return const_iterator{inputRange_.cbegin(), inputRange_.cend(), predicate_};
         else
-            return iterator{inputRange_.cbegin(), inputRange_.cend(), &predicate_};
+            return const_iterator{inputRange_.cbegin(), inputRange_.cend(), &predicate_};
     }
 
-    auto cend() const { return iterator{inputRange_.cend(), inputRange_.cend()}; }
+    auto cend() const { return const_iterator{inputRange_.cend(), inputRange_.cend()}; }
 
     auto begin() const { return cbegin(); }
 
     auto end() const { return cend(); }
 
 private:
-    range_storage_type inputRange_;
+    range_storage inputRange_;
     mutable Predicate predicate_;
 };
 
 template<typename Predicate>
-class FilterViewFactory {
+class FilterBinder : public dansandu::range::category::range_binder_tag {
 public:
-    using range_factory_category = dansandu::range::category::view_factory_tag;
-    using predicate_type = typename std::decay_t<Predicate>;
+    using decayed_predicate = typename std::decay_t<Predicate>;
 
     template<typename PredicateForward>
-    explicit FilterViewFactory(PredicateForward&& predicate) : predicate_{std::forward<PredicateForward>(predicate)} {}
+    explicit FilterBinder(PredicateForward&& predicate) : predicate_{std::forward<PredicateForward>(predicate)} {}
 
-    FilterViewFactory(const FilterViewFactory&) = delete;
+    FilterBinder(const FilterBinder&) = delete;
 
-    FilterViewFactory(FilterViewFactory&&) = default;
+    FilterBinder(FilterBinder&&) = default;
 
-    FilterViewFactory& operator=(const FilterViewFactory&) = delete;
+    FilterBinder& operator=(const FilterBinder&) = delete;
 
-    FilterViewFactory& operator=(FilterViewFactory&&) = default;
+    FilterBinder& operator=(FilterBinder&&) = default;
 
     template<typename InputRange>
-    auto create(InputRange&& inputRange) && {
-        return FilterView<InputRange&&, predicate_type>{std::forward<InputRange>(inputRange), std::move(predicate_)};
+    auto bind(InputRange&& inputRange) && {
+        return FilterRange<InputRange&&, decayed_predicate>{std::forward<InputRange>(inputRange),
+                                                            std::move(predicate_)};
     }
 
 private:
-    predicate_type predicate_;
+    decayed_predicate predicate_;
 };
 
 template<typename Predicate>
 auto filter(Predicate&& predicate) {
-    return FilterViewFactory<Predicate&&>(std::forward<Predicate>(predicate));
+    return FilterBinder<Predicate&&>(std::forward<Predicate>(predicate));
 }
 
 }
