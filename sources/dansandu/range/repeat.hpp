@@ -59,9 +59,9 @@ auto operator!=(const RepeatIterator<Iterator>& a, const RepeatIterator<Iterator
 template<typename InputRange>
 class RepeatView {
 public:
-    using storage_type = dansandu::range::storage::Storage<InputRange>;
+    using range_storage_type = dansandu::range::storage::Storage<InputRange>;
     using range_category = dansandu::range::category::view_tag;
-    using const_iterator = RepeatIterator<typename storage_type::const_iterator>;
+    using const_iterator = RepeatIterator<typename range_storage_type::const_iterator>;
     using iterator = const_iterator;
 
     template<typename InputRangeForward>
@@ -84,7 +84,7 @@ public:
     auto end() const { return cend(); }
 
 private:
-    storage_type inputRange_;
+    range_storage_type inputRange_;
 };
 
 class RepeatViewFactory {
