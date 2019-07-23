@@ -10,7 +10,7 @@ template<typename InitialValue, typename Folder>
 class FoldBinder : public dansandu::range::category::range_binder_tag {
 public:
     using value_type = typename std::decay_t<InitialValue>;
-    using folder_type = typename std::decay_t<Folder>;
+    using decayed_folder = typename std::decay_t<Folder>;
 
     template<typename InitialValueForward, typename FolderForward>
     explicit FoldBinder(InitialValueForward&& initialValue, FolderForward&& folder)
@@ -34,7 +34,7 @@ public:
 
 private:
     value_type initialValue_;
-    folder_type folder_;
+    decayed_folder folder_;
 };
 
 template<typename InitialValue, typename Folder>
