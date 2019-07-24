@@ -27,8 +27,8 @@ public:
 
     template<typename InputRange>
     auto bind(InputRange&& inputRange) && {
-        for (const auto& element : inputRange)
-            initialValue_ = folder_(initialValue_, element);
+        for (auto&& element : inputRange)
+            initialValue_ = folder_(std::move(initialValue_), std::forward<decltype(element)>(element));
         return std::move(initialValue_);
     }
 
