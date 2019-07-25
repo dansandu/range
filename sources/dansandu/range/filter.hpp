@@ -19,8 +19,13 @@ public:
 
     friend auto operator==(const FilterIterator& a, const FilterIterator& b) { return a.position_ == b.position_; }
 
+    FilterIterator(InputIterator position, InputIterator end)
+        : position_{std::move(position)}, end_{std::move(end)}, predicate_{nullptr} {}
+
     FilterIterator(InputIterator position, InputIterator end, PredicatePointer predicate)
-        : position_{std::move(position)}, end_{std::move(end)}, predicate_{predicate} {}
+        : position_{std::move(position)}, end_{std::move(end)}, predicate_{predicate} {
+        findMatch();
+    }
 
     FilterIterator(const FilterIterator&) = default;
 
@@ -32,11 +37,7 @@ public:
 
     auto& operator++() {
         ++position_;
-        if (predicate_)
-            while (position_ != end_ && !((*predicate_)(*position_)))
-                ++position_;
-        else
-            position_ = end_;
+        findMatch();
         return *this;
     }
 
@@ -49,6 +50,21 @@ public:
     auto operator*() const { return *position_; }
 
 private:
+    void findMatch() {
+        if (predicate_) {
+            if constexpr (std::is_member_function_pointer_v<PredicatePointer>)
+                while (position_ != end_ && !(((*position_).*predicate_)()))
+                    ++position_;
+            else if constexpr (std::is_member_object_pointer_v<PredicatePointer>)
+                while (position_ != end_ && !((*position_).*predicate_))
+                    ++position_;
+            else
+                while (position_ != end_ && !((*predicate_)(*position_)))
+                    ++position_;
+        } else
+            position_ = end_;
+    }
+
     InputIterator position_;
     InputIterator end_;
     PredicatePointer predicate_;
@@ -64,7 +80,8 @@ class FilterRange {
 public:
     using range_category = dansandu::range::category::view_tag;
     using range_storage = dansandu::range::storage::Storage<InputRange>;
-    using predicate_pointer = std::conditional_t<std::is_pointer_v<Predicate>, Predicate, Predicate*>;
+    using predicate_pointer =
+        std::conditional_t<std::is_pointer_v<Predicate> || std::is_member_pointer_v<Predicate>, Predicate, Predicate*>;
     using const_iterator = FilterIterator<typename range_storage::const_iterator, predicate_pointer>;
     using iterator = const_iterator;
 
@@ -82,13 +99,13 @@ public:
     FilterRange& operator=(FilterRange&&) = default;
 
     auto cbegin() const {
-        if constexpr (std::is_pointer_v<Predicate>)
+        if constexpr (std::is_pointer_v<Predicate> || std::is_member_pointer_v<Predicate>)
             return const_iterator{inputRange_.cbegin(), inputRange_.cend(), predicate_};
         else
             return const_iterator{inputRange_.cbegin(), inputRange_.cend(), &predicate_};
     }
 
-    auto cend() const { return const_iterator{inputRange_.cend(), inputRange_.cend(), nullptr}; }
+    auto cend() const { return const_iterator{inputRange_.cend(), inputRange_.cend()}; }
 
     auto begin() const { return cbegin(); }
 
