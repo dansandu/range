@@ -10,15 +10,26 @@ namespace dansandu::range::map {
 
 template<typename InputIterator, typename MappingPointer>
 class MapIterator {
+    static auto map(const InputIterator& position, MappingPointer mapping) {
+        if constexpr (std::is_member_function_pointer_v<MappingPointer>)
+            return ((*position).*mapping)();
+        else if constexpr (std::is_member_object_pointer_v<MappingPointer>)
+            return (*position).*mapping;
+        else
+            return (*mapping)(*position);
+    }
+
 public:
     using iterator_category = std::input_iterator_tag;
     using difference_type = long long;
     using value_type =
-        typename std::decay_t<decltype((*std::declval<MappingPointer>())(*std::declval<InputIterator>()))>;
+        typename std::decay_t<decltype(map(std::declval<InputIterator>(), std::declval<MappingPointer>()))>;
     using reference = value_type&;
     using pointer = value_type*;
 
     friend auto operator==(const MapIterator& a, const MapIterator& b) { return a.position_ == b.position_; }
+
+    explicit MapIterator(InputIterator position) : position_{std::move(position)}, mapping_{nullptr} {}
 
     MapIterator(InputIterator position, MappingPointer mapping) : position_{std::move(position)}, mapping_{mapping} {}
 
@@ -41,7 +52,7 @@ public:
         return copy;
     }
 
-    auto operator*() const { return (*mapping_)(*position_); }
+    auto operator*() const { return map(position_, mapping_); }
 
 private:
     InputIterator position_;
@@ -58,7 +69,8 @@ class MapRange {
 public:
     using range_category = dansandu::range::category::view_tag;
     using range_storage = dansandu::range::storage::Storage<InputRange>;
-    using mapping_pointer = std::conditional_t<std::is_pointer_v<Mapping>, Mapping, Mapping*>;
+    using mapping_pointer =
+        std::conditional_t<std::is_pointer_v<Mapping> || std::is_member_pointer_v<Mapping>, Mapping, Mapping*>;
     using const_iterator = MapIterator<typename range_storage::const_iterator, mapping_pointer>;
     using iterator = const_iterator;
 
@@ -75,13 +87,13 @@ public:
     MapRange& operator=(MapRange&&) = default;
 
     auto cbegin() const {
-        if constexpr (std::is_pointer_v<Mapping>)
+        if constexpr (std::is_pointer_v<Mapping> || std::is_member_pointer_v<Mapping>)
             return const_iterator{storage_.cbegin(), mapping_};
         else
             return const_iterator{storage_.cbegin(), &mapping_};
     }
 
-    auto cend() const { return const_iterator{storage_.cend(), nullptr}; }
+    auto cend() const { return const_iterator{storage_.cend()}; }
 
     auto begin() const { return cbegin(); }
 

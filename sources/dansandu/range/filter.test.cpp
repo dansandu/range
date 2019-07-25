@@ -9,11 +9,9 @@ struct Box {
     bool isEmpty;
 };
 
-auto operator==(Box a, Box b) { return a.id == b.id && a.isEmpty == b.isEmpty; }
+static auto operator==(Box a, Box b) { return a.id == b.id && a.isEmpty == b.isEmpty; }
 
-auto operator!=(Box a, Box b) { return !(a == b); }
-
-std::ostream& operator<<(std::ostream& stream, Box box) {
+static std::ostream& operator<<(std::ostream& stream, Box box) {
     return stream << "Box(" << box.id << ", " << box.isEmpty << ")";
 }
 
