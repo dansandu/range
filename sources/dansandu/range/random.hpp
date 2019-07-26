@@ -18,7 +18,7 @@ public:
     using pointer = value_type*;
 
     RandomIterator(value_type lowerBoundryInclusive, value_type upperBoundryInclusive)
-        : distribution_{lowerBoundryInclusive, upperBoundryInclusive} {}
+        : distribution_{lowerBoundryInclusive, upperBoundryInclusive}, value_{generateRandomNumber(distribution_)} {}
 
     RandomIterator(const RandomIterator&) = default;
 
