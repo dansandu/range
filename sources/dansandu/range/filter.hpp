@@ -80,8 +80,10 @@ class FilterRange {
 public:
     using range_category = dansandu::range::category::view_tag;
     using range_storage = dansandu::range::storage::Storage<InputRange>;
+    using decayed_predicate = std::decay_t<Predicate>;
     using predicate_pointer =
-        std::conditional_t<std::is_pointer_v<Predicate> || std::is_member_pointer_v<Predicate>, Predicate, Predicate*>;
+        std::conditional_t<std::is_pointer_v<decayed_predicate> || std::is_member_pointer_v<decayed_predicate>,
+                           decayed_predicate, decayed_predicate*>;
     using const_iterator = FilterIterator<typename range_storage::const_iterator, predicate_pointer>;
     using iterator = const_iterator;
 
@@ -99,7 +101,7 @@ public:
     FilterRange& operator=(FilterRange&&) = default;
 
     auto cbegin() const {
-        if constexpr (std::is_pointer_v<Predicate> || std::is_member_pointer_v<Predicate>)
+        if constexpr (std::is_pointer_v<decayed_predicate> || std::is_member_pointer_v<decayed_predicate>)
             return const_iterator{inputRange_.cbegin(), inputRange_.cend(), predicate_};
         else
             return const_iterator{inputRange_.cbegin(), inputRange_.cend(), &predicate_};
@@ -113,7 +115,7 @@ public:
 
 private:
     range_storage inputRange_;
-    mutable Predicate predicate_;
+    mutable decayed_predicate predicate_;
 };
 
 template<typename Predicate>
