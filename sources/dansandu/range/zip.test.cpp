@@ -2,6 +2,7 @@
 #include "dansandu/range/pipe.hpp"
 #include "dansandu/range/zip.hpp"
 
+#include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
@@ -9,6 +10,8 @@
 using dansandu::range::zip::zip;
 using dansandu::range::pipe::operator|;
 using std::string_view_literals::operator""sv;
+
+struct Word {};
 
 TEST_CASE("Zip") {
     SECTION("equal ranges") {
@@ -118,6 +121,38 @@ TEST_CASE("Zip") {
             REQUIRE(names.empty());
 
             REQUIRE(favoriteColours.empty());
+
+            REQUIRE(actual == expected);
+        }
+    }
+
+    SECTION("custom zipper") {
+        using integers = std::vector<int>;
+
+        SECTION("lambda expression") {
+            auto zipper = [](auto a, auto b) { return a * b; };
+            auto primes = integers{{3, 5, 7, 11}};
+            auto morePrimes = integers{{13, 17, 19, 23}};
+            auto expected = integers{{39, 85, 133, 253}};
+
+            auto range = primes | zip(zipper, morePrimes);
+            auto actual = integers(range.begin(), range.end());
+
+            REQUIRE(actual == expected);
+        }
+
+        SECTION("member function pointer") {
+            using strings = std::vector<std::wstring>;
+            
+            auto zipper =
+                static_cast<int (std::wstring::*)(const std::wstring&) const noexcept>(&std::wstring::compare);
+            
+            auto english = strings{{L"cat", L"food", L"house", L"duck"}};
+            auto romanian = strings{{L"pisică", L"mâncare", L"casă", L"rață"}};
+            auto expected = integers{{-1, -1, 1, -1}};
+
+            auto range = english | zip(zipper, romanian);
+            auto actual = integers(range.begin(), range.end());
 
             REQUIRE(actual == expected);
         }
