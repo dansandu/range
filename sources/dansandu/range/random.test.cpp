@@ -3,7 +3,8 @@
 
 #include <cmath>
 
-TEST_CASE("Random") {
+TEST_CASE("Random")
+{
     constexpr auto lowerBoundry = 1;
     constexpr auto upperBoundry = 100;
     constexpr auto bucketSize = 20;
@@ -17,9 +18,11 @@ TEST_CASE("Random") {
 
     int buckets[numberOfBuckets] = {0};
     auto generatedNumbersAreWithinBoundries = true;
-    for (auto i = 0; i < numberOfSamples; ++i, ++iterator) {
+    for (auto i = 0; i < numberOfSamples; ++i, ++iterator)
+    {
         auto generatedNumber = *iterator;
-        if (generatedNumber < lowerBoundry || generatedNumber > upperBoundry) {
+        if (generatedNumber < lowerBoundry || generatedNumber > upperBoundry)
+        {
             generatedNumbersAreWithinBoundries = false;
             break;
         }
@@ -30,7 +33,8 @@ TEST_CASE("Random") {
 
     auto numbersAreUniformlyDistributed = true;
     for (auto i = 0; i < numberOfBuckets; ++i)
-        if (std::abs(idealSamplesPerBucket - buckets[i]) / static_cast<double>(idealSamplesPerBucket) > tolerance) {
+        if (std::abs(idealSamplesPerBucket - buckets[i]) / static_cast<double>(idealSamplesPerBucket) > tolerance)
+        {
             numbersAreUniformlyDistributed = false;
             break;
         }

@@ -5,8 +5,10 @@
 using dansandu::range::concatenate::concatenate;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("Concatenate") {
-    SECTION("empty with empty") {
+TEST_CASE("Concatenate")
+{
+    SECTION("empty with empty")
+    {
         auto even = std::vector<int>{};
         auto odd = std::vector<int>{};
 
@@ -15,7 +17,8 @@ TEST_CASE("Concatenate") {
         REQUIRE(range.begin() == range.end());
     }
 
-    SECTION("non-empty with empty") {
+    SECTION("non-empty with empty")
+    {
         auto even = std::vector<int>{{0, 2, 4}};
         auto odd = std::vector<int>{};
 
@@ -25,7 +28,8 @@ TEST_CASE("Concatenate") {
         REQUIRE(actual == std::vector<int>{{0, 2, 4}});
     }
 
-    SECTION("empty with non-empty") {
+    SECTION("empty with non-empty")
+    {
         auto even = std::vector<int>{};
         auto odd = std::vector<int>{{1, 3, 5}};
 
@@ -35,7 +39,8 @@ TEST_CASE("Concatenate") {
         REQUIRE(actual == std::vector<int>{{1, 3, 5}});
     }
 
-    SECTION("empty with non-empty") {
+    SECTION("empty with non-empty")
+    {
         auto even = std::vector<int>{{0, 2, 4}};
         auto odd = std::vector<int>{{1, 3, 5}};
 
@@ -45,7 +50,8 @@ TEST_CASE("Concatenate") {
         REQUIRE(actual == std::vector<int>{{0, 2, 4, 1, 3, 5}});
     }
 
-    SECTION("second range can be converted to first") {
+    SECTION("second range can be converted to first")
+    {
         auto even = std::vector<int>{{0, 2, 4}};
         auto letters = std::vector<char>{{'a', 'b', 'c'}};
 

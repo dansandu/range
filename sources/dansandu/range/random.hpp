@@ -5,11 +5,13 @@
 #include <iterator>
 #include <random>
 
-namespace dansandu::range::random {
+namespace dansandu::range::random
+{
 
 int generateRandomNumber(std::uniform_int_distribution<int>& distribution);
 
-class RandomIterator {
+class RandomIterator
+{
 public:
     using iterator_category = std::input_iterator_tag;
     using difference_type = long long;
@@ -18,7 +20,9 @@ public:
     using pointer = value_type*;
 
     RandomIterator(value_type lowerBoundryInclusive, value_type upperBoundryInclusive)
-        : distribution_{lowerBoundryInclusive, upperBoundryInclusive}, value_{generateRandomNumber(distribution_)} {}
+        : distribution_{lowerBoundryInclusive, upperBoundryInclusive}, value_{generateRandomNumber(distribution_)}
+    {
+    }
 
     RandomIterator(const RandomIterator&) = default;
 
@@ -28,29 +32,41 @@ public:
 
     RandomIterator& operator=(RandomIterator&&) = default;
 
-    auto& operator++() {
+    auto& operator++()
+    {
         value_ = generateRandomNumber(distribution_);
         return *this;
     }
 
-    auto operator++(int) {
+    auto operator++(int)
+    {
         auto copy = *this;
         ++*this;
         return copy;
     }
 
-    auto operator*() const { return value_; }
+    auto operator*() const
+    {
+        return value_;
+    }
 
 private:
     std::uniform_int_distribution<value_type> distribution_;
     value_type value_;
 };
 
-inline auto operator==(const RandomIterator&, const RandomIterator&) { return false; }
+inline auto operator==(const RandomIterator&, const RandomIterator&)
+{
+    return false;
+}
 
-inline auto operator!=(const RandomIterator&, const RandomIterator&) { return true; }
+inline auto operator!=(const RandomIterator&, const RandomIterator&)
+{
+    return true;
+}
 
-class RandomRange {
+class RandomRange
+{
 public:
     using range_category = dansandu::range::category::generator_tag;
     using const_iterator = RandomIterator;
@@ -58,7 +74,9 @@ public:
     using value_type = const_iterator::value_type;
 
     RandomRange(value_type lowerBoundryInclusive, value_type upperBoundryInclusive)
-        : lowerBoundryInclusive_{lowerBoundryInclusive}, upperBoundryInclusive_{upperBoundryInclusive} {}
+        : lowerBoundryInclusive_{lowerBoundryInclusive}, upperBoundryInclusive_{upperBoundryInclusive}
+    {
+    }
 
     RandomRange(const RandomRange&) = delete;
 
@@ -68,23 +86,39 @@ public:
 
     RandomRange& operator=(RandomRange&&) = default;
 
-    auto cbegin() const { return const_iterator{lowerBoundryInclusive_, upperBoundryInclusive_}; }
+    auto cbegin() const
+    {
+        return const_iterator{lowerBoundryInclusive_, upperBoundryInclusive_};
+    }
 
-    auto cend() const { return cbegin(); }
+    auto cend() const
+    {
+        return cbegin();
+    }
 
-    auto begin() const { return cbegin(); }
+    auto begin() const
+    {
+        return cbegin();
+    }
 
-    auto end() const { return cend(); }
+    auto end() const
+    {
+        return cend();
+    }
 
 private:
     value_type lowerBoundryInclusive_;
     value_type upperBoundryInclusive_;
 };
 
-inline auto random(RandomRange::value_type lowerBoundryInclusive, RandomRange::value_type upperBoundryInclusive) {
+inline auto random(RandomRange::value_type lowerBoundryInclusive, RandomRange::value_type upperBoundryInclusive)
+{
     return RandomRange{lowerBoundryInclusive, upperBoundryInclusive};
 }
 
-inline auto random() { return RandomRange{1, 100}; }
+inline auto random()
+{
+    return RandomRange{1, 100};
+}
 
 }

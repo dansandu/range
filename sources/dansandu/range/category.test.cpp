@@ -11,26 +11,34 @@ using dansandu::range::category::range_binder_tag;
 using dansandu::range::category::reduction_tag;
 using dansandu::range::category::view_tag;
 
-struct ContainerMock {
+struct ContainerMock
+{
     using range_category = container_tag;
 };
 
-struct GeneratorMock {
+struct GeneratorMock
+{
     using range_category = generator_tag;
 };
 
-struct ViewMock {
+struct ViewMock
+{
     using range_category = view_tag;
 };
 
-struct ReductionMock {
+struct ReductionMock
+{
     using range_category = reduction_tag;
 };
 
-struct RangeBinderMock : range_binder_tag {};
+struct RangeBinderMock : range_binder_tag
+{
+};
 
-TEST_CASE("Category") {
-    SECTION("pipe head") {
+TEST_CASE("Category")
+{
+    SECTION("pipe head")
+    {
         REQUIRE(is_pipe_head<std::vector<int>>);
 
         REQUIRE(is_pipe_head<ContainerMock>);
@@ -48,7 +56,8 @@ TEST_CASE("Category") {
         REQUIRE(!is_pipe_head<double>);
     }
 
-    SECTION("range binder") {
+    SECTION("range binder")
+    {
         REQUIRE(is_range_binder<RangeBinderMock>);
 
         REQUIRE(!is_range_binder<ContainerMock>);

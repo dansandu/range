@@ -6,10 +6,12 @@
 #include <iterator>
 #include <type_traits>
 
-namespace dansandu::range::repeat {
+namespace dansandu::range::repeat
+{
 
 template<typename InputIterator>
-class RepeatIterator {
+class RepeatIterator
+{
 public:
     using iterator_category = std::input_iterator_tag;
     using difference_type = long long;
@@ -17,10 +19,15 @@ public:
     using pointer = value_type*;
     using reference = value_type&;
 
-    friend auto operator==(const RepeatIterator& a, const RepeatIterator& b) { return a.position_ == b.position_; }
+    friend auto operator==(const RepeatIterator& a, const RepeatIterator& b)
+    {
+        return a.position_ == b.position_;
+    }
 
     RepeatIterator(InputIterator begin, InputIterator position, InputIterator end)
-        : begin_{std::move(begin)}, position_{std::move(position)}, end_{std::move(end)} {}
+        : begin_{std::move(begin)}, position_{std::move(position)}, end_{std::move(end)}
+    {
+    }
 
     RepeatIterator(const RepeatIterator&) = default;
 
@@ -30,20 +37,25 @@ public:
 
     RepeatIterator& operator=(RepeatIterator&&) = default;
 
-    auto& operator++() {
+    auto& operator++()
+    {
         ++position_;
         if (position_ == end_)
             position_ = begin_;
         return *this;
     }
 
-    auto operator++(int) {
+    auto operator++(int)
+    {
         auto copy = *this;
         ++*this;
         return copy;
     }
 
-    auto operator*() const { return *position_; }
+    auto operator*() const
+    {
+        return *position_;
+    }
 
 private:
     InputIterator begin_;
@@ -52,12 +64,14 @@ private:
 };
 
 template<typename InputIterator>
-auto operator!=(const RepeatIterator<InputIterator>& a, const RepeatIterator<InputIterator>& b) {
+auto operator!=(const RepeatIterator<InputIterator>& a, const RepeatIterator<InputIterator>& b)
+{
     return !(a == b);
 }
 
 template<typename InputRange>
-class RepeatRange {
+class RepeatRange
+{
 public:
     using range_storage = dansandu::range::storage::Storage<InputRange>;
     using range_category = dansandu::range::category::view_tag;
@@ -65,7 +79,9 @@ public:
     using iterator = const_iterator;
 
     template<typename InputRangeForward>
-    explicit RepeatRange(InputRangeForward&& inputRange) : inputRange_{std::forward<InputRangeForward>(inputRange)} {}
+    explicit RepeatRange(InputRangeForward&& inputRange) : inputRange_{std::forward<InputRangeForward>(inputRange)}
+    {
+    }
 
     RepeatRange(const RepeatRange&) = default;
 
@@ -75,19 +91,32 @@ public:
 
     RepeatRange& operator=(RepeatRange&&) = default;
 
-    auto cbegin() const { return const_iterator{inputRange_.cbegin(), inputRange_.cbegin(), inputRange_.cend()}; }
+    auto cbegin() const
+    {
+        return const_iterator{inputRange_.cbegin(), inputRange_.cbegin(), inputRange_.cend()};
+    }
 
-    auto cend() const { return const_iterator{inputRange_.cbegin(), inputRange_.cend(), inputRange_.cend()}; }
+    auto cend() const
+    {
+        return const_iterator{inputRange_.cbegin(), inputRange_.cend(), inputRange_.cend()};
+    }
 
-    auto begin() const { return cbegin(); }
+    auto begin() const
+    {
+        return cbegin();
+    }
 
-    auto end() const { return cend(); }
+    auto end() const
+    {
+        return cend();
+    }
 
 private:
     range_storage inputRange_;
 };
 
-class RepeatBinder : public dansandu::range::category::range_binder_tag {
+class RepeatBinder : public dansandu::range::category::range_binder_tag
+{
 public:
     RepeatBinder(const RepeatBinder&) = delete;
 
@@ -98,11 +127,15 @@ public:
     RepeatBinder& operator=(RepeatBinder&&) = default;
 
     template<typename InputRange>
-    auto bind(InputRange&& inputRange) && {
+    auto bind(InputRange&& inputRange) &&
+    {
         return RepeatRange<InputRange&&>{std::forward<InputRange>(inputRange)};
     }
 };
 
-inline auto repeat() { return RepeatBinder{}; }
+inline auto repeat()
+{
+    return RepeatBinder{};
+}
 
 }

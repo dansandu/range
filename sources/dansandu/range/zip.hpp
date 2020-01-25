@@ -7,11 +7,14 @@
 #include <type_traits>
 #include <utility>
 
-namespace dansandu::range::zip {
+namespace dansandu::range::zip
+{
 
 template<typename ZipperPointer, typename LeftIterator, typename RightIterator>
-class ZipIterator {
-    static auto zip(ZipperPointer zipper, const LeftIterator& left, const RightIterator& right) {
+class ZipIterator
+{
+    static auto zip(ZipperPointer zipper, const LeftIterator& left, const RightIterator& right)
+    {
         if constexpr (std::is_member_function_pointer_v<ZipperPointer>)
             return ((*left).*zipper)(*right);
         else
@@ -26,7 +29,8 @@ public:
     using reference = value_type&;
     using difference_type = long long;
 
-    friend auto operator==(const ZipIterator& a, const ZipIterator& b) {
+    friend auto operator==(const ZipIterator& a, const ZipIterator& b)
+    {
         return a.leftPosition_ == b.leftPosition_ || a.rightPosition_ == b.rightPosition_;
     }
 
@@ -36,7 +40,9 @@ public:
           leftPosition_{std::move(leftPosition)},
           leftEnd_{std::move(leftEnd)},
           rightPosition_{std::move(rightPosition)},
-          rightEnd_{std::move(rightEnd)} {}
+          rightEnd_{std::move(rightEnd)}
+    {
+    }
 
     ZipIterator(const ZipIterator&) = default;
 
@@ -46,21 +52,27 @@ public:
 
     ZipIterator& operator=(ZipIterator&&) = default;
 
-    ZipIterator& operator++() {
-        if (leftPosition_ != leftEnd_ && rightPosition_ != rightEnd_) {
+    ZipIterator& operator++()
+    {
+        if (leftPosition_ != leftEnd_ && rightPosition_ != rightEnd_)
+        {
             ++leftPosition_;
             ++rightPosition_;
         }
         return *this;
     }
 
-    ZipIterator operator++(int) {
+    ZipIterator operator++(int)
+    {
         auto copy = *this;
         ++*this;
         return copy;
     }
 
-    auto operator*() const { return zip(zipper_, leftPosition_, rightPosition_); }
+    auto operator*() const
+    {
+        return zip(zipper_, leftPosition_, rightPosition_);
+    }
 
 private:
     ZipperPointer zipper_;
@@ -72,12 +84,14 @@ private:
 
 template<typename ZipperPointer, typename LeftIterator, typename RightIterator>
 auto operator!=(const ZipIterator<ZipperPointer, LeftIterator, RightIterator>& a,
-                const ZipIterator<ZipperPointer, LeftIterator, RightIterator>& b) {
+                const ZipIterator<ZipperPointer, LeftIterator, RightIterator>& b)
+{
     return !(a == b);
 }
 
 template<typename Zipper, typename LeftRange, typename RightRange>
-struct ZipRange {
+struct ZipRange
+{
 public:
     using range_category = dansandu::range::category::view_tag;
     using decayed_zipper = std::decay_t<Zipper>;
@@ -94,7 +108,9 @@ public:
     ZipRange(ZipperForward&& zipper, LeftRangeForward&& leftRange, RightRangeForward&& rightRange)
         : zipper_{std::forward<ZipperForward>(zipper)},
           leftRange_{std::forward<LeftRangeForward>(leftRange)},
-          rightRange_{std::forward<RightRangeForward>(rightRange)} {}
+          rightRange_{std::forward<RightRangeForward>(rightRange)}
+    {
+    }
 
     ZipRange(const ZipRange&) = delete;
 
@@ -104,7 +120,8 @@ public:
 
     ZipRange& operator=(ZipRange&&) = default;
 
-    auto cbegin() const {
+    auto cbegin() const
+    {
         if constexpr (std::is_pointer_v<decayed_zipper> || std::is_member_pointer_v<decayed_zipper>)
             return const_iterator{zipper_, leftRange_.cbegin(), leftRange_.cend(), rightRange_.cbegin(),
                                   rightRange_.cend()};
@@ -113,7 +130,8 @@ public:
                                   rightRange_.cend()};
     }
 
-    auto cend() const {
+    auto cend() const
+    {
         if constexpr (std::is_pointer_v<decayed_zipper> || std::is_member_pointer_v<decayed_zipper>)
             return const_iterator{zipper_, leftRange_.cend(), leftRange_.cend(), rightRange_.cend(),
                                   rightRange_.cend()};
@@ -122,9 +140,15 @@ public:
                                   rightRange_.cend()};
     }
 
-    auto begin() const { return cbegin(); }
+    auto begin() const
+    {
+        return cbegin();
+    }
 
-    auto end() const { return cend(); }
+    auto end() const
+    {
+        return cend();
+    }
 
 private:
     mutable decayed_zipper zipper_;
@@ -133,13 +157,16 @@ private:
 };
 
 template<typename Zipper, typename RightRange>
-class ZipBinder : public dansandu::range::category::range_binder_tag {
+class ZipBinder : public dansandu::range::category::range_binder_tag
+{
 public:
     using decayed_zipper = std::decay_t<Zipper>;
 
     template<typename ZipperForward, typename RightRangeForward>
     explicit ZipBinder(ZipperForward&& zipper, RightRangeForward&& rightRange)
-        : zipper_{std::forward<ZipperForward>(zipper)}, rightRange_{std::forward<RightRangeForward>(rightRange)} {}
+        : zipper_{std::forward<ZipperForward>(zipper)}, rightRange_{std::forward<RightRangeForward>(rightRange)}
+    {
+    }
 
     ZipBinder(const ZipBinder&) = delete;
 
@@ -150,7 +177,8 @@ public:
     ZipBinder& operator=(ZipBinder&&) = default;
 
     template<typename LeftRange>
-    auto bind(LeftRange&& leftRange) && {
+    auto bind(LeftRange&& leftRange) &&
+    {
         return ZipRange<decayed_zipper, LeftRange&&, RightRange&&>{
             std::move(zipper_), std::forward<LeftRange>(leftRange), std::move(rightRange_)};
     }
@@ -162,19 +190,23 @@ private:
 
 template<typename Zipper, typename RightRange,
          typename = std::enable_if_t<dansandu::range::category::is_pipe_head<RightRange>>>
-auto zip(Zipper&& zipper, RightRange&& rightRange) {
+auto zip(Zipper&& zipper, RightRange&& rightRange)
+{
     return ZipBinder<Zipper&&, RightRange&&>{std::forward<Zipper>(zipper), std::forward<RightRange>(rightRange)};
 }
 
-struct pair {
+struct pair
+{
     template<typename T1, typename T2>
-    constexpr auto operator()(T1&& first, T2&& second) const {
+    constexpr auto operator()(T1&& first, T2&& second) const
+    {
         return std::make_pair(std::forward<T1>(first), std::forward<T2>(second));
     }
 };
 
 template<typename RightRange, typename = std::enable_if_t<dansandu::range::category::is_pipe_head<RightRange>>>
-auto zip(RightRange&& rightRange) {
+auto zip(RightRange&& rightRange)
+{
     return zip(pair{}, std::forward<RightRange>(rightRange));
 }
 

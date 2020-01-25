@@ -6,11 +6,14 @@
 #include <iterator>
 #include <type_traits>
 
-namespace dansandu::range::map {
+namespace dansandu::range::map
+{
 
 template<typename InputIterator, typename MappingPointer>
-class MapIterator {
-    static auto map(const InputIterator& position, MappingPointer mapping) {
+class MapIterator
+{
+    static auto map(const InputIterator& position, MappingPointer mapping)
+    {
         if constexpr (std::is_member_function_pointer_v<MappingPointer>)
             return ((*position).*mapping)();
         else if constexpr (std::is_member_object_pointer_v<MappingPointer>)
@@ -27,11 +30,18 @@ public:
     using reference = value_type&;
     using pointer = value_type*;
 
-    friend auto operator==(const MapIterator& a, const MapIterator& b) { return a.position_ == b.position_; }
+    friend auto operator==(const MapIterator& a, const MapIterator& b)
+    {
+        return a.position_ == b.position_;
+    }
 
-    explicit MapIterator(InputIterator position) : position_{std::move(position)}, mapping_{nullptr} {}
+    explicit MapIterator(InputIterator position) : position_{std::move(position)}, mapping_{nullptr}
+    {
+    }
 
-    MapIterator(InputIterator position, MappingPointer mapping) : position_{std::move(position)}, mapping_{mapping} {}
+    MapIterator(InputIterator position, MappingPointer mapping) : position_{std::move(position)}, mapping_{mapping}
+    {
+    }
 
     MapIterator(const MapIterator&) = default;
 
@@ -41,18 +51,23 @@ public:
 
     MapIterator& operator=(MapIterator&&) = default;
 
-    auto& operator++() {
+    auto& operator++()
+    {
         ++position_;
         return *this;
     }
 
-    auto operator++(int) {
+    auto operator++(int)
+    {
         auto copy = *this;
         ++*this;
         return copy;
     }
 
-    auto operator*() const { return map(position_, mapping_); }
+    auto operator*() const
+    {
+        return map(position_, mapping_);
+    }
 
 private:
     InputIterator position_;
@@ -60,12 +75,14 @@ private:
 };
 
 template<typename InputIterator, typename Mapping>
-auto operator!=(const MapIterator<InputIterator, Mapping>& a, const MapIterator<InputIterator, Mapping>& b) {
+auto operator!=(const MapIterator<InputIterator, Mapping>& a, const MapIterator<InputIterator, Mapping>& b)
+{
     return !(a == b);
 }
 
 template<typename InputRange, typename Mapping>
-class MapRange {
+class MapRange
+{
 public:
     using range_category = dansandu::range::category::view_tag;
     using range_storage = dansandu::range::storage::Storage<InputRange>;
@@ -76,7 +93,9 @@ public:
 
     template<typename InputRangeForward, typename MappingForward>
     MapRange(InputRangeForward&& inputRange, MappingForward&& mapping)
-        : storage_{std::forward<InputRangeForward>(inputRange)}, mapping_{std::forward<MappingForward>(mapping)} {}
+        : storage_{std::forward<InputRangeForward>(inputRange)}, mapping_{std::forward<MappingForward>(mapping)}
+    {
+    }
 
     MapRange(const MapRange&) = delete;
 
@@ -86,18 +105,28 @@ public:
 
     MapRange& operator=(MapRange&&) = default;
 
-    auto cbegin() const {
+    auto cbegin() const
+    {
         if constexpr (std::is_pointer_v<Mapping> || std::is_member_pointer_v<Mapping>)
             return const_iterator{storage_.cbegin(), mapping_};
         else
             return const_iterator{storage_.cbegin(), &mapping_};
     }
 
-    auto cend() const { return const_iterator{storage_.cend()}; }
+    auto cend() const
+    {
+        return const_iterator{storage_.cend()};
+    }
 
-    auto begin() const { return cbegin(); }
+    auto begin() const
+    {
+        return cbegin();
+    }
 
-    auto end() const { return cend(); }
+    auto end() const
+    {
+        return cend();
+    }
 
 private:
     range_storage storage_;
@@ -105,12 +134,15 @@ private:
 };
 
 template<typename Mapping>
-class MapBinder : public dansandu::range::category::range_binder_tag {
+class MapBinder : public dansandu::range::category::range_binder_tag
+{
 public:
     using decayed_mapping = std::decay_t<Mapping>;
 
     template<typename MappingForward>
-    MapBinder(MappingForward&& mapping) : mapping_{std::forward<MappingForward>(mapping)} {}
+    MapBinder(MappingForward&& mapping) : mapping_{std::forward<MappingForward>(mapping)}
+    {
+    }
 
     MapBinder(const MapBinder&) = delete;
 
@@ -121,7 +153,8 @@ public:
     MapBinder& operator=(MapBinder&&) = default;
 
     template<typename InputRange>
-    auto bind(InputRange&& inputRange) && {
+    auto bind(InputRange&& inputRange) &&
+    {
         return MapRange<InputRange&&, decayed_mapping>{std::forward<InputRange>(inputRange), std::move(mapping_)};
     }
 
@@ -130,7 +163,8 @@ private:
 };
 
 template<typename Mapping>
-inline auto map(Mapping&& mapping) {
+inline auto map(Mapping&& mapping)
+{
     return MapBinder<Mapping&&>{std::forward<Mapping>(mapping)};
 }
 

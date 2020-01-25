@@ -6,10 +6,12 @@
 #include <iterator>
 #include <type_traits>
 
-namespace dansandu::range::concatenate {
+namespace dansandu::range::concatenate
+{
 
 template<typename LeftIterator, typename RightIterator>
-class ConcatenateIterator {
+class ConcatenateIterator
+{
 public:
     using iterator_category = std::input_iterator_tag;
     using difference_type = long long;
@@ -17,14 +19,15 @@ public:
     using reference = value_type&;
     using pointer = value_type*;
 
-    friend auto operator==(const ConcatenateIterator& a, const ConcatenateIterator& b) {
+    friend auto operator==(const ConcatenateIterator& a, const ConcatenateIterator& b)
+    {
         return a.leftPosition_ == b.leftPosition_ && a.rightPosition_ == b.rightPosition_;
     }
 
     ConcatenateIterator(LeftIterator leftPosition, LeftIterator leftEnd, RightIterator rightPosition)
-        : leftPosition_{std::move(leftPosition)},
-          leftEnd_{std::move(leftEnd)},
-          rightPosition_{std::move(rightPosition)} {}
+        : leftPosition_{std::move(leftPosition)}, leftEnd_{std::move(leftEnd)}, rightPosition_{std::move(rightPosition)}
+    {
+    }
 
     ConcatenateIterator(const ConcatenateIterator&) = default;
 
@@ -34,7 +37,8 @@ public:
 
     ConcatenateIterator& operator=(ConcatenateIterator&&) = default;
 
-    auto& operator++() {
+    auto& operator++()
+    {
         if (leftPosition_ != leftEnd_)
             ++leftPosition_;
         else
@@ -42,13 +46,15 @@ public:
         return *this;
     }
 
-    auto operator++(int) {
+    auto operator++(int)
+    {
         auto copy = *this;
         ++*this;
         return copy;
     }
 
-    auto operator*() const {
+    auto operator*() const
+    {
         if (leftPosition_ != leftEnd_)
             return *leftPosition_;
         else
@@ -63,12 +69,14 @@ private:
 
 template<typename LeftIterator, typename RightIterator>
 auto operator!=(const ConcatenateIterator<LeftIterator, RightIterator>& a,
-                const ConcatenateIterator<LeftIterator, RightIterator>& b) {
+                const ConcatenateIterator<LeftIterator, RightIterator>& b)
+{
     return !(a == b);
 }
 
 template<typename LeftRange, typename RightRange>
-class ConcatenateRange {
+class ConcatenateRange
+{
 public:
     using range_category = dansandu::range::category::view_tag;
     using left_range_storage = dansandu::range::storage::Storage<LeftRange>;
@@ -80,7 +88,9 @@ public:
     template<typename LeftRangeForward, typename RightRangeForward>
     ConcatenateRange(LeftRangeForward&& leftRange, RightRangeForward&& rightRange)
         : leftRange_{std::forward<LeftRangeForward>(leftRange)},
-          rightRange_{std::forward<RightRangeForward>(rightRange)} {}
+          rightRange_{std::forward<RightRangeForward>(rightRange)}
+    {
+    }
 
     ConcatenateRange(const ConcatenateRange&) = delete;
 
@@ -90,13 +100,25 @@ public:
 
     ConcatenateRange& operator=(ConcatenateRange&&) = default;
 
-    auto cbegin() const { return const_iterator{leftRange_.cbegin(), leftRange_.cend(), rightRange_.cbegin()}; }
+    auto cbegin() const
+    {
+        return const_iterator{leftRange_.cbegin(), leftRange_.cend(), rightRange_.cbegin()};
+    }
 
-    auto cend() const { return const_iterator{leftRange_.cend(), leftRange_.cend(), rightRange_.cend()}; }
+    auto cend() const
+    {
+        return const_iterator{leftRange_.cend(), leftRange_.cend(), rightRange_.cend()};
+    }
 
-    auto begin() const { return cbegin(); }
+    auto begin() const
+    {
+        return cbegin();
+    }
 
-    auto end() const { return cend(); }
+    auto end() const
+    {
+        return cend();
+    }
 
 private:
     left_range_storage leftRange_;
@@ -104,11 +126,14 @@ private:
 };
 
 template<typename RightRange>
-class ConcatenateBinder : public dansandu::range::category::range_binder_tag {
+class ConcatenateBinder : public dansandu::range::category::range_binder_tag
+{
 public:
     template<typename RightRangeForward>
     explicit ConcatenateBinder(RightRangeForward&& rightRange)
-        : rightRange_{std::forward<RightRangeForward>(rightRange)} {}
+        : rightRange_{std::forward<RightRangeForward>(rightRange)}
+    {
+    }
 
     ConcatenateBinder(const ConcatenateBinder&) = delete;
 
@@ -119,7 +144,8 @@ public:
     ConcatenateBinder& operator=(ConcatenateBinder&&) = default;
 
     template<typename LeftRange>
-    auto bind(LeftRange&& leftRange) && {
+    auto bind(LeftRange&& leftRange) &&
+    {
         return ConcatenateRange<LeftRange&&, RightRange&&>{std::forward<LeftRange>(leftRange), std::move(rightRange_)};
     }
 
@@ -128,7 +154,8 @@ private:
 };
 
 template<typename InputRange>
-inline auto concatenate(InputRange&& inputRange) {
+inline auto concatenate(InputRange&& inputRange)
+{
     return ConcatenateBinder<InputRange&&>{std::forward<InputRange>(inputRange)};
 }
 

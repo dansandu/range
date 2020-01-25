@@ -7,7 +7,8 @@
 using dansandu::range::repeat::repeat;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("Repeat") {
+TEST_CASE("Repeat")
+{
     auto vector = std::vector<int>{{1, 2}};
     auto range = vector | repeat();
     auto iterator = range.begin();

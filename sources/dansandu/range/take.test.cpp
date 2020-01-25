@@ -9,16 +9,19 @@
 using dansandu::range::take::take;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("Take") {
+TEST_CASE("Take")
+{
     std::vector<std::string_view> names = {"Beatrice", "Michael", "Lisa"};
 
-    SECTION("zero elements") {
+    SECTION("zero elements")
+    {
         auto range = names | take(0);
 
         REQUIRE(range.begin() == range.end());
     }
 
-    SECTION("non-empty subinterval") {
+    SECTION("non-empty subinterval")
+    {
         auto range = names | take(2);
         auto iterator = range.begin();
         auto end = range.end();
@@ -38,7 +41,8 @@ TEST_CASE("Take") {
         REQUIRE(iterator == end);
     }
 
-    SECTION("all elements") {
+    SECTION("all elements")
+    {
         auto range = names | take(3);
         auto iterator = range.begin();
         auto end = range.end();
@@ -64,7 +68,8 @@ TEST_CASE("Take") {
         REQUIRE(iterator == end);
     }
 
-    SECTION("overhead elements") {
+    SECTION("overhead elements")
+    {
         auto range = names | take(4);
         auto iterator = range.begin();
         auto end = range.end();

@@ -8,24 +8,28 @@
 using dansandu::range::fold::fold;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("Fold") {
+TEST_CASE("Fold")
+{
     auto add = [](const auto& a, const auto& b) { return a + b; };
 
-    SECTION("integers") {
+    SECTION("integers")
+    {
         auto integers = std::vector<int>{{0, 1, 2, 3, 4}};
         auto sum = integers | fold(0, add);
 
         REQUIRE(sum == 10);
     }
 
-    SECTION("strings") {
+    SECTION("strings")
+    {
         auto strings = std::vector<std::string>{{"Ana ", "are ", "mere."}};
         auto concatenation = strings | fold(std::string{}, add);
 
         REQUIRE(concatenation == "Ana are mere.");
     }
 
-    SECTION("empty range") {
+    SECTION("empty range")
+    {
         auto intialVale = 0;
         auto integers = std::vector<int>{};
         auto sum = integers | fold(intialVale, add);
