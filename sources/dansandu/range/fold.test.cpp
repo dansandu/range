@@ -15,7 +15,8 @@ TEST_CASE("Fold")
     SECTION("integers")
     {
         auto integers = std::vector<int>{{0, 1, 2, 3, 4}};
-        auto sum = integers | fold(0, add);
+        auto initialValue = 0;
+        auto sum = integers | fold(initialValue, add);
 
         REQUIRE(sum == 10);
     }
@@ -23,17 +24,18 @@ TEST_CASE("Fold")
     SECTION("strings")
     {
         auto strings = std::vector<std::string>{{"Ana ", "are ", "mere."}};
-        auto concatenation = strings | fold(std::string{}, add);
+        auto initialValue = std::string{};
+        auto concatenation = strings | fold(initialValue, add);
 
         REQUIRE(concatenation == "Ana are mere.");
     }
 
     SECTION("empty range")
     {
-        auto intialVale = 0;
         auto integers = std::vector<int>{};
-        auto sum = integers | fold(intialVale, add);
+        auto initialValue = 0;
+        auto sum = integers | fold(initialValue, add);
 
-        REQUIRE(sum == intialVale);
+        REQUIRE(sum == initialValue);
     }
 }

@@ -2,6 +2,7 @@
 
 #include "dansandu/ballotin/type_traits.hpp"
 
+#include <list>
 #include <type_traits>
 #include <vector>
 
@@ -43,6 +44,15 @@ struct is_pipe_head_wrapper
 
 template<typename Type>
 struct is_pipe_head_wrapper<std::vector<Type>>
+{
+    static constexpr auto getValue(dansandu::ballotin::type_traits::best_case)
+    {
+        return true;
+    }
+};
+
+template<typename Type>
+struct is_pipe_head_wrapper<std::list<Type>>
 {
     static constexpr auto getValue(dansandu::ballotin::type_traits::best_case)
     {
