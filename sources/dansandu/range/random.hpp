@@ -1,14 +1,13 @@
 #pragma once
 
 #include "dansandu/range/category.hpp"
+#include "dansandu/range/randomness.hpp"
 
 #include <iterator>
 #include <random>
 
 namespace dansandu::range::random
 {
-
-int generateRandomNumber(std::uniform_int_distribution<int>& distribution);
 
 class RandomIterator
 {
@@ -20,7 +19,8 @@ public:
     using pointer = value_type*;
 
     RandomIterator(value_type lowerBoundryInclusive, value_type upperBoundryInclusive)
-        : distribution_{lowerBoundryInclusive, upperBoundryInclusive}, value_{generateRandomNumber(distribution_)}
+        : distribution_{lowerBoundryInclusive, upperBoundryInclusive},
+          value_{distribution_(dansandu::range::randomness::getRandomGenerator())}
     {
     }
 
@@ -34,7 +34,7 @@ public:
 
     auto& operator++()
     {
-        value_ = generateRandomNumber(distribution_);
+        value_ = distribution_(dansandu::range::randomness::getRandomGenerator());
         return *this;
     }
 

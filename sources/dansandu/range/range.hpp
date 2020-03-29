@@ -8,6 +8,7 @@
 #include "dansandu/range/pipe.hpp"
 #include "dansandu/range/random.hpp"
 #include "dansandu/range/repeat.hpp"
+#include "dansandu/range/shuffle.hpp"
 #include "dansandu/range/take.hpp"
 #include "dansandu/range/to_vector.hpp"
 #include "dansandu/range/zip.hpp"
@@ -23,6 +24,7 @@ using dansandu::range::map::map;
 using dansandu::range::pipe::operator|;
 using dansandu::range::random::random;
 using dansandu::range::repeat::repeat;
+using dansandu::range::shuffle::shuffle;
 using dansandu::range::take::take;
 using dansandu::range::to_vector::toVector;
 using dansandu::range::zip::zip;
