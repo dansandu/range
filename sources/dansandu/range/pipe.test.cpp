@@ -1,25 +1,11 @@
 #include "catchorg/catch/catch.hpp"
-#include "dansandu/range/concatenate.hpp"
-#include "dansandu/range/filter.hpp"
-#include "dansandu/range/fold.hpp"
-#include "dansandu/range/map.hpp"
-#include "dansandu/range/pipe.hpp"
-#include "dansandu/range/repeat.hpp"
-#include "dansandu/range/take.hpp"
-#include "dansandu/range/zip.hpp"
+#include "dansandu/range/range.hpp"
 
 #include <string>
 #include <utility>
 #include <vector>
 
-using dansandu::range::concatenate::concatenate;
-using dansandu::range::filter::filter;
-using dansandu::range::fold::fold;
-using dansandu::range::map::map;
-using dansandu::range::take::take;
-using dansandu::range::zip::zip;
-using dansandu::range::pipe::operator|;
-using dansandu::range::repeat::repeat;
+using namespace dansandu::range::range;
 
 TEST_CASE("Pipe")
 {
