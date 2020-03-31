@@ -1,26 +1,64 @@
 #pragma once
 
+#include "dansandu/ballotin/default_random_generator.hpp"
 #include "dansandu/range/category.hpp"
-#include "dansandu/range/randomness.hpp"
 
 #include <iterator>
-#include <random>
 
 namespace dansandu::range::random
 {
 
+template<typename T, bool isIntegral = std::is_integral_v<T>>
+class DistributionWrapper;
+
+template<typename T>
+class DistributionWrapper<T, true>
+{
+public:
+    DistributionWrapper(const T& a, const T& b) : distribution{a, b}
+    {
+    }
+
+    template<typename Generator>
+    auto operator()(Generator& generator)
+    {
+        return distribution(generator);
+    }
+
+private:
+    std::uniform_int_distribution<T> distribution;
+};
+
+template<typename T>
+class DistributionWrapper<T, false>
+{
+public:
+    DistributionWrapper(const T& a, const T& b) : distribution{a, b}
+    {
+    }
+
+    template<typename Generator>
+    auto operator()(Generator& generator)
+    {
+        return distribution(generator);
+    }
+
+private:
+    std::uniform_real_distribution<T> distribution;
+};
+
+template<typename T, typename RandomGenerator>
 class RandomIterator
 {
 public:
     using iterator_category = std::input_iterator_tag;
     using difference_type = long long;
-    using value_type = int;
+    using value_type = T;
     using reference = value_type&;
     using pointer = value_type*;
 
-    RandomIterator(value_type lowerBoundryInclusive, value_type upperBoundryInclusive)
-        : distribution_{lowerBoundryInclusive, upperBoundryInclusive},
-          value_{distribution_(dansandu::range::randomness::getRandomGenerator())}
+    RandomIterator(const value_type& lowerBoundry, const value_type& upperBoundry)
+        : distributionWrapper_{lowerBoundry, upperBoundry}, value_{distributionWrapper_(RandomGenerator::instance())}
     {
     }
 
@@ -34,7 +72,7 @@ public:
 
     auto& operator++()
     {
-        value_ = distribution_(dansandu::range::randomness::getRandomGenerator());
+        value_ = distributionWrapper_(RandomGenerator::instance());
         return *this;
     }
 
@@ -51,30 +89,33 @@ public:
     }
 
 private:
-    std::uniform_int_distribution<value_type> distribution_;
+    DistributionWrapper<value_type> distributionWrapper_;
     value_type value_;
 };
 
-inline auto operator==(const RandomIterator&, const RandomIterator&)
+template<typename T, typename R1, typename R2>
+inline auto operator==(const RandomIterator<T, R1>&, const RandomIterator<T, R2>&)
 {
     return false;
 }
 
-inline auto operator!=(const RandomIterator&, const RandomIterator&)
+template<typename T, typename R1, typename R2>
+inline auto operator!=(const RandomIterator<T, R1>&, const RandomIterator<T, R2>&)
 {
     return true;
 }
 
+template<typename T, typename RandomGenerator>
 class RandomRange
 {
 public:
+    using value_type = std::decay_t<T>;
     using range_category = dansandu::range::category::generator_tag;
-    using const_iterator = RandomIterator;
+    using const_iterator = RandomIterator<value_type, RandomGenerator>;
     using iterator = const_iterator;
-    using value_type = const_iterator::value_type;
 
-    RandomRange(value_type lowerBoundryInclusive, value_type upperBoundryInclusive)
-        : lowerBoundryInclusive_{lowerBoundryInclusive}, upperBoundryInclusive_{upperBoundryInclusive}
+    RandomRange(value_type lowerBoundry, value_type upperBoundry)
+        : lowerBoundry_{lowerBoundry}, upperBoundry_{upperBoundry}
     {
     }
 
@@ -88,7 +129,7 @@ public:
 
     auto cbegin() const
     {
-        return const_iterator{lowerBoundryInclusive_, upperBoundryInclusive_};
+        return const_iterator{lowerBoundry_, upperBoundry_};
     }
 
     auto cend() const
@@ -107,18 +148,29 @@ public:
     }
 
 private:
-    value_type lowerBoundryInclusive_;
-    value_type upperBoundryInclusive_;
+    value_type lowerBoundry_;
+    value_type upperBoundry_;
 };
 
-inline auto random(RandomRange::value_type lowerBoundryInclusive, RandomRange::value_type upperBoundryInclusive)
+template<typename T, typename RandomGenerator = dansandu::ballotin::default_random_generator::DefaultRandomGenerator>
+auto random(const T& lowerBoundry, const T& upperBoundry)
 {
-    return RandomRange{lowerBoundryInclusive, upperBoundryInclusive};
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    return RandomRange<T, RandomGenerator>{lowerBoundry, upperBoundry};
 }
 
-inline auto random()
+template<typename T, typename RandomGenerator = dansandu::ballotin::default_random_generator::DefaultRandomGenerator>
+auto random()
 {
-    return RandomRange{1, 100};
+    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
+    if constexpr (std::is_integral_v<T>)
+    {
+        return RandomRange<T, RandomGenerator>(0, 100);
+    }
+    else
+    {
+        return RandomRange<T, RandomGenerator>(0.0, 1.0);
+    }
 }
 
 }

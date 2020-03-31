@@ -1,15 +1,16 @@
 #pragma once
 
+#include "dansandu/ballotin/default_random_generator.hpp"
 #include "dansandu/range/category.hpp"
-#include "dansandu/range/randomness.hpp"
 
-#include <algorithm>
+#include <iostream>
 #include <type_traits>
 #include <vector>
 
 namespace dansandu::range::shuffle
 {
 
+template<typename RandomGenerator>
 class ShuffleBinder : public dansandu::range::category::range_binder_tag
 {
 public:
@@ -30,14 +31,23 @@ public:
         auto result = std::vector<value_type>{};
         for (auto&& element : inputRange)
             result.push_back(std::forward<decltype(element)>(element));
-        std::shuffle(result.begin(), result.end(), dansandu::range::randomness::getRandomGenerator());
+        auto size = static_cast<int>(result.size());
+        using result_type = typename std::decay_t<decltype(RandomGenerator::instance())>::result_type;
+        for (auto index = 0; index + 1 < size; ++index)
+        {
+            auto range = static_cast<result_type>(size - index);
+            auto pick = index + static_cast<int>(RandomGenerator::instance()() % range);
+            using std::swap;
+            swap(result[index], result[pick]);
+        }
         return result;
     }
 };
 
+template<typename RandomGenerator = dansandu::ballotin::default_random_generator::DefaultRandomGenerator>
 inline auto shuffle()
 {
-    return ShuffleBinder{};
+    return ShuffleBinder<RandomGenerator>{};
 }
 
 }
