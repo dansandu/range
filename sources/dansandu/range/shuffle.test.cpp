@@ -5,6 +5,7 @@
 #include "dansandu/range/to_vector.hpp"
 
 #include <algorithm>
+#include <random>
 #include <vector>
 
 using dansandu::range::integers::integers;
@@ -14,10 +15,12 @@ using dansandu::range::pipe::operator|;
 
 TEST_CASE("Shuffle")
 {
+    auto generator = std::minstd_rand{};
+
     SECTION("integers")
     {
         auto myIntegers = integers(0, 1, 100) | toVector();
-        auto shuffled = myIntegers | shuffle();
+        auto shuffled = myIntegers | shuffle(generator);
 
         REQUIRE(shuffled.size() == myIntegers.size());
 
@@ -27,7 +30,7 @@ TEST_CASE("Shuffle")
     SECTION("empty range")
     {
         auto integers = std::vector<int>{};
-        auto shuffled = integers | shuffle();
+        auto shuffled = integers | shuffle(generator);
 
         REQUIRE(shuffled.empty());
     }

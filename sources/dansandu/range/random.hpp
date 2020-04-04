@@ -1,64 +1,65 @@
 #pragma once
 
-#include "dansandu/ballotin/default_random_generator.hpp"
 #include "dansandu/range/category.hpp"
 
 #include <iterator>
+#include <random>
 
 namespace dansandu::range::random
 {
 
-template<typename T, bool isIntegral = std::is_integral_v<T>>
+template<typename ValueType, bool isIntegral = std::is_integral_v<ValueType>>
 class DistributionWrapper;
 
-template<typename T>
-class DistributionWrapper<T, true>
+template<typename ValueType>
+class DistributionWrapper<ValueType, true>
 {
 public:
-    DistributionWrapper(const T& a, const T& b) : distribution{a, b}
+    DistributionWrapper(const ValueType& a, const ValueType& b) : distribution_{a, b}
     {
     }
 
     template<typename Generator>
     auto operator()(Generator& generator)
     {
-        return distribution(generator);
+        return distribution_(generator);
     }
 
 private:
-    std::uniform_int_distribution<T> distribution;
+    std::uniform_int_distribution<ValueType> distribution_;
 };
 
-template<typename T>
-class DistributionWrapper<T, false>
+template<typename ValueType>
+class DistributionWrapper<ValueType, false>
 {
 public:
-    DistributionWrapper(const T& a, const T& b) : distribution{a, b}
+    DistributionWrapper(const ValueType& a, const ValueType& b) : distribution_{a, b}
     {
     }
 
     template<typename Generator>
     auto operator()(Generator& generator)
     {
-        return distribution(generator);
+        return distribution_(generator);
     }
 
 private:
-    std::uniform_real_distribution<T> distribution;
+    std::uniform_real_distribution<ValueType> distribution_;
 };
 
-template<typename T, typename RandomGenerator>
+template<typename Generator, typename ValueType>
 class RandomIterator
 {
 public:
+    using generator_type = Generator;
+    using value_type = ValueType;
     using iterator_category = std::input_iterator_tag;
     using difference_type = long long;
-    using value_type = T;
     using reference = value_type&;
     using pointer = value_type*;
 
-    RandomIterator(const value_type& lowerBoundry, const value_type& upperBoundry)
-        : distributionWrapper_{lowerBoundry, upperBoundry}, value_{distributionWrapper_(RandomGenerator::instance())}
+    RandomIterator(generator_type* generator, const value_type& a, const value_type& b)
+        : generator_{generator}, distributionWrapper_{a, b}, value_{distributionWrapper_(*generator)}
     {
     }
 
@@ -72,7 +73,7 @@ public:
 
     auto& operator++()
     {
-        value_ = distributionWrapper_(RandomGenerator::instance());
+        value_ = distributionWrapper_(*generator_);
         return *this;
     }
 
@@ -89,33 +90,34 @@ public:
     }
 
 private:
+    generator_type* generator_;
     DistributionWrapper<value_type> distributionWrapper_;
     value_type value_;
 };
 
-template<typename T, typename R1, typename R2>
-inline auto operator==(const RandomIterator<T, R1>&, const RandomIterator<T, R2>&)
+template<typename Generator, typename ValueType>
+auto operator==(const RandomIterator<Generator, ValueType>&, const RandomIterator<Generator, ValueType>&)
 {
     return false;
 }
 
-template<typename T, typename R1, typename R2>
-inline auto operator!=(const RandomIterator<T, R1>&, const RandomIterator<T, R2>&)
+template<typename Generator, typename ValueType>
+auto operator!=(const RandomIterator<Generator, ValueType>&, const RandomIterator<Generator, ValueType>&)
 {
     return true;
 }
 
-template<typename T, typename RandomGenerator>
+template<typename Generator, typename ValueType>
 class RandomRange
 {
 public:
-    using value_type = std::decay_t<T>;
+    using generator_type = Generator;
+    using value_type = ValueType;
     using range_category = dansandu::range::category::generator_tag;
-    using const_iterator = RandomIterator<value_type, RandomGenerator>;
+    using const_iterator = RandomIterator<generator_type, value_type>;
     using iterator = const_iterator;
 
-    RandomRange(value_type lowerBoundry, value_type upperBoundry)
-        : lowerBoundry_{lowerBoundry}, upperBoundry_{upperBoundry}
+    RandomRange(generator_type* generator, const ValueType& a, const ValueType& b) : generator_{generator}, a_{a}, b_{b}
     {
     }
 
@@ -129,7 +131,7 @@ public:
 
     auto cbegin() const
     {
-        return const_iterator{lowerBoundry_, upperBoundry_};
+        return const_iterator{generator_, a_, b_};
     }
 
     auto cend() const
@@ -144,33 +146,34 @@ public:
 
     auto end() const
     {
-        return cend();
+        return cbegin();
     }
 
 private:
-    value_type lowerBoundry_;
-    value_type upperBoundry_;
+    generator_type* generator_;
+    value_type a_;
+    value_type b_;
 };
 
-template<typename T, typename RandomGenerator = dansandu::ballotin::default_random_generator::DefaultRandomGenerator>
-auto random(const T& lowerBoundry, const T& upperBoundry)
+template<typename ValueType, typename Generator>
+auto random(Generator& generator, const ValueType& a, const ValueType& b)
 {
-    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
-    return RandomRange<T, RandomGenerator>{lowerBoundry, upperBoundry};
+    using generator_type = std::decay_t<Generator>;
+    using value_type = std::decay_t<ValueType>;
+    static_assert(std::is_integral_v<value_type> || std::is_floating_point_v<value_type>);
+    return RandomRange<generator_type, value_type>{&generator, a, b};
 }
 
-template<typename T, typename RandomGenerator = dansandu::ballotin::default_random_generator::DefaultRandomGenerator>
-auto random()
+template<typename ValueType, typename Generator>
+auto random(Generator& generator)
 {
-    static_assert(std::is_integral_v<T> || std::is_floating_point_v<T>);
-    if constexpr (std::is_integral_v<T>)
-    {
-        return RandomRange<T, RandomGenerator>(0, 100);
-    }
+    using generator_type = std::decay_t<Generator>;
+    using value_type = std::decay_t<ValueType>;
+    static_assert(std::is_integral_v<value_type> || std::is_floating_point_v<value_type>);
+    if constexpr (std::is_integral_v<value_type>)
+        return RandomRange<generator_type, value_type>(&generator, 0, std::numeric_limits<value_type>::max());
     else
-    {
-        return RandomRange<T, RandomGenerator>(0.0, 1.0);
-    }
+        return RandomRange<generator_type, value_type>(&generator, 0.0, 1.0);
 }
 
 }

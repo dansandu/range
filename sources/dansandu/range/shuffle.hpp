@@ -1,20 +1,21 @@
 #pragma once
 
-#include "dansandu/ballotin/default_random_generator.hpp"
 #include "dansandu/range/category.hpp"
 
-#include <iostream>
+#include <algorithm>
 #include <type_traits>
 #include <vector>
 
 namespace dansandu::range::shuffle
 {
 
-template<typename RandomGenerator>
+template<typename Generator>
 class ShuffleBinder : public dansandu::range::category::range_binder_tag
 {
 public:
-    ShuffleBinder() = default;
+    ShuffleBinder(Generator* generator) : generator_{generator}
+    {
+    }
 
     ShuffleBinder(const ShuffleBinder&) = delete;
 
@@ -31,23 +32,19 @@ public:
         auto result = std::vector<value_type>{};
         for (auto&& element : inputRange)
             result.push_back(std::forward<decltype(element)>(element));
-        auto size = static_cast<int>(result.size());
-        using result_type = typename std::decay_t<decltype(RandomGenerator::instance())>::result_type;
-        for (auto index = 0; index + 1 < size; ++index)
-        {
-            auto range = static_cast<result_type>(size - index);
-            auto pick = index + static_cast<int>(RandomGenerator::instance()() % range);
-            using std::swap;
-            swap(result[index], result[pick]);
-        }
+        std::shuffle(result.begin(), result.end(), *generator_);
         return result;
     }
+
+private:
+    Generator* generator_;
 };
 
-template<typename RandomGenerator = dansandu::ballotin::default_random_generator::DefaultRandomGenerator>
-inline auto shuffle()
+template<typename Generator>
+inline auto shuffle(Generator& generator)
 {
-    return ShuffleBinder<RandomGenerator>{};
+    using generator_type = std::decay_t<Generator>;
+    return ShuffleBinder<generator_type>{&generator};
 }
 
 }

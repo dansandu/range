@@ -1,5 +1,4 @@
 #include "catchorg/catch/catch.hpp"
-#include "dansandu/ballotin/predictive_random_generator.hpp"
 #include "dansandu/range/pipe.hpp"
 #include "dansandu/range/random.hpp"
 #include "dansandu/range/take.hpp"
@@ -7,47 +6,94 @@
 #include <algorithm>
 #include <cmath>
 
-using Catch::Detail::Approx;
-using dansandu::ballotin::predictive_random_generator::PredictiveRandomGenerator;
 using dansandu::range::random::random;
 using dansandu::range::take::take;
 using dansandu::range::pipe::operator|;
 
 TEST_CASE("Random")
 {
+    auto generator = std::minstd_rand{};
+
     SECTION("integral values")
     {
-        SECTION("default parameters")
-        {
-            auto range = random<int, PredictiveRandomGenerator>() | take(100);
+        constexpr auto a = 0;
+        constexpr auto b = 99;
+        constexpr auto sampleCount = 1000;
+        constexpr auto bucketCount = 10;
+        constexpr auto possibleValues = b - a + 1;
 
-            REQUIRE(std::all_of(range.begin(), range.end(), [](auto i) { return i == 34; }));
+        REQUIRE(possibleValues % bucketCount == 0);
+
+        constexpr auto bucketWidth = possibleValues / bucketCount;
+        constexpr auto bucketTarget = sampleCount / bucketCount;
+        constexpr auto tolerance = 0.25;
+
+        auto range = random<int>(generator, a, b) | take(sampleCount);
+
+        int buckets[bucketCount] = {0};
+        auto withinBounds = true;
+        for (auto sample : range)
+        {
+            if (sample < a || sample > b)
+            {
+                withinBounds = false;
+                break;
+            }
+            ++buckets[sample / bucketWidth];
         }
 
-        SECTION("non-default parameters")
-        {
-            auto range = random<int, PredictiveRandomGenerator>(60, 120) | take(100);
+        REQUIRE(withinBounds);
 
-            REQUIRE(std::all_of(range.begin(), range.end(), [](auto i) { return i == 110; }));
-        }
+        auto uniformDistribution = true;
+        for (auto bucket : buckets)
+            if (std::abs(bucketTarget - bucket) / static_cast<double>(bucketTarget) > tolerance)
+            {
+                uniformDistribution = false;
+                break;
+            }
+
+        REQUIRE(uniformDistribution);
     }
 
     SECTION("real values")
     {
-        auto epsilon = 1.0e-5;
+        constexpr auto a = 0.0;
+        constexpr auto b = 1.0;
+        constexpr auto interval = b - a;
+        constexpr auto sampleCount = 1000;
+        constexpr auto bucketCount = 10;
 
-        SECTION("default parameters")
+        constexpr auto bucketWidth = interval / bucketCount;
+        constexpr auto bucketTarget = sampleCount / bucketCount;
+        constexpr auto tolerance = 0.25;
+
+        auto range = random<double>(generator, a, b) | take(sampleCount);
+
+        int buckets[bucketCount] = {0};
+        auto withinBounds = true;
+        for (auto sample : range)
         {
-            auto range = random<double, PredictiveRandomGenerator>() | take(100);
-
-            REQUIRE(std::all_of(range.begin(), range.end(), [epsilon](auto d) { return std::abs(d - 0.5) < epsilon; }));
+            if (sample < a || sample >= b)
+            {
+                withinBounds = false;
+                break;
+            }
+            auto bucket = 0;
+            while (sample > (bucket + 1) * bucketWidth && bucket < bucketCount)
+                ++bucket;
+            ++buckets[bucket];
         }
 
-        SECTION("non-default parameters")
-        {
-            auto range = random<double, PredictiveRandomGenerator>(5.0, 10.0) | take(100);
+        REQUIRE(withinBounds);
 
-            REQUIRE(std::all_of(range.begin(), range.end(), [epsilon](auto d) { return std::abs(d - 7.5) < epsilon; }));
-        }
+        auto uniformDistribution = true;
+        for (auto bucket : buckets)
+            if (std::abs(bucketTarget - bucket) / static_cast<double>(bucketTarget) > tolerance)
+            {
+                uniformDistribution = false;
+                break;
+            }
+
+        REQUIRE(uniformDistribution);
     }
 }
