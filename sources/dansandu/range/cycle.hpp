@@ -6,11 +6,11 @@
 #include <iterator>
 #include <type_traits>
 
-namespace dansandu::range::repeat
+namespace dansandu::range::cycle
 {
 
 template<typename InputIterator>
-class RepeatIterator
+class CycleIterator
 {
 public:
     using iterator_category = std::input_iterator_tag;
@@ -19,29 +19,36 @@ public:
     using pointer = value_type*;
     using reference = value_type&;
 
-    friend auto operator==(const RepeatIterator& a, const RepeatIterator& b)
+    friend auto operator==(const CycleIterator& a, const CycleIterator& b)
     {
         return a.position_ == b.position_;
     }
 
-    RepeatIterator(InputIterator begin, InputIterator position, InputIterator end)
+    CycleIterator(InputIterator begin, InputIterator position, InputIterator end)
         : begin_{std::move(begin)}, position_{std::move(position)}, end_{std::move(end)}
     {
     }
 
-    RepeatIterator(const RepeatIterator&) = default;
+    CycleIterator(const CycleIterator&) = default;
 
-    RepeatIterator(RepeatIterator&&) = default;
+    CycleIterator(CycleIterator&&) = default;
 
-    RepeatIterator& operator=(const RepeatIterator&) = default;
+    CycleIterator& operator=(const CycleIterator&) = default;
 
-    RepeatIterator& operator=(RepeatIterator&&) = default;
+    CycleIterator& operator=(CycleIterator&&) = default;
 
     auto& operator++()
     {
-        ++position_;
         if (position_ == end_)
+        {
             position_ = begin_;
+        }
+        else
+        {
+            ++position_;
+            if (position_ == end_)
+                position_ = begin_;
+        }
         return *this;
     }
 
@@ -64,32 +71,32 @@ private:
 };
 
 template<typename InputIterator>
-auto operator!=(const RepeatIterator<InputIterator>& a, const RepeatIterator<InputIterator>& b)
+auto operator!=(const CycleIterator<InputIterator>& a, const CycleIterator<InputIterator>& b)
 {
     return !(a == b);
 }
 
 template<typename InputRange>
-class RepeatRange
+class CycleRange
 {
 public:
     using range_storage = dansandu::range::storage::Storage<InputRange>;
     using range_category = dansandu::range::category::view_tag;
-    using const_iterator = RepeatIterator<typename range_storage::const_iterator>;
+    using const_iterator = CycleIterator<typename range_storage::const_iterator>;
     using iterator = const_iterator;
 
     template<typename InputRangeForward>
-    explicit RepeatRange(InputRangeForward&& inputRange) : inputRange_{std::forward<InputRangeForward>(inputRange)}
+    explicit CycleRange(InputRangeForward&& inputRange) : inputRange_{std::forward<InputRangeForward>(inputRange)}
     {
     }
 
-    RepeatRange(const RepeatRange&) = default;
+    CycleRange(const CycleRange&) = default;
 
-    RepeatRange(RepeatRange&&) = default;
+    CycleRange(CycleRange&&) = default;
 
-    RepeatRange& operator=(const RepeatRange&) = default;
+    CycleRange& operator=(const CycleRange&) = default;
 
-    RepeatRange& operator=(RepeatRange&&) = default;
+    CycleRange& operator=(CycleRange&&) = default;
 
     auto cbegin() const
     {
@@ -115,27 +122,27 @@ private:
     range_storage inputRange_;
 };
 
-class RepeatBinder : public dansandu::range::category::range_binder_tag
+class CycleBinder : public dansandu::range::category::range_binder_tag
 {
 public:
-    RepeatBinder(const RepeatBinder&) = delete;
+    CycleBinder(const CycleBinder&) = delete;
 
-    RepeatBinder(RepeatBinder&&) = default;
+    CycleBinder(CycleBinder&&) = default;
 
-    RepeatBinder& operator=(const RepeatBinder&) = delete;
+    CycleBinder& operator=(const CycleBinder&) = delete;
 
-    RepeatBinder& operator=(RepeatBinder&&) = default;
+    CycleBinder& operator=(CycleBinder&&) = default;
 
     template<typename InputRange>
     auto bind(InputRange&& inputRange) &&
     {
-        return RepeatRange<InputRange&&>{std::forward<InputRange>(inputRange)};
+        return CycleRange<InputRange&&>{std::forward<InputRange>(inputRange)};
     }
 };
 
-inline auto repeat()
+inline auto cycle()
 {
-    return RepeatBinder{};
+    return CycleBinder{};
 }
 
 }
