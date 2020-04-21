@@ -23,7 +23,7 @@ public:
     friend auto operator==(const TakeIterator& a, const TakeIterator& b)
     {
         return a.position_ == b.position_ ||
-               (a.elementsTaken_ == a.elementsToTake_ && b.elementsTaken_ == b.elementsToTake_);
+               (a.elementsTaken_ >= a.elementsToTake_ && b.elementsTaken_ >= b.elementsToTake_);
     }
 
     TakeIterator(InputIterator position, InputIterator end, int elementsToTake)
@@ -78,7 +78,6 @@ template<typename InputRange>
 class TakeRange
 {
 public:
-    using range_category = dansandu::range::category::view_tag;
     using range_storage = dansandu::range::storage::Storage<InputRange>;
     using const_iterator = TakeIterator<typename range_storage::const_iterator>;
     using iterator = const_iterator;
@@ -99,12 +98,12 @@ public:
 
     auto cbegin() const
     {
-        return iterator{inputRange_.cbegin(), inputRange_.cend(), elementsToTake_};
+        return iterator{inputRange_.begin(), inputRange_.end(), elementsToTake_};
     }
 
     auto cend() const
     {
-        return iterator{inputRange_.cend(), inputRange_.cend(), 0};
+        return iterator{inputRange_.end(), inputRange_.end(), 0};
     }
 
     auto begin() const

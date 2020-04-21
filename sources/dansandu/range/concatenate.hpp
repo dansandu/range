@@ -78,7 +78,6 @@ template<typename LeftRange, typename RightRange>
 class ConcatenateRange
 {
 public:
-    using range_category = dansandu::range::category::view_tag;
     using left_range_storage = dansandu::range::storage::Storage<LeftRange>;
     using right_range_storage = dansandu::range::storage::Storage<RightRange>;
     using const_iterator =
@@ -102,12 +101,12 @@ public:
 
     auto cbegin() const
     {
-        return const_iterator{leftRange_.cbegin(), leftRange_.cend(), rightRange_.cbegin()};
+        return const_iterator{leftRange_.begin(), leftRange_.end(), rightRange_.begin()};
     }
 
     auto cend() const
     {
-        return const_iterator{leftRange_.cend(), leftRange_.cend(), rightRange_.cend()};
+        return const_iterator{leftRange_.end(), leftRange_.end(), rightRange_.end()};
     }
 
     auto begin() const

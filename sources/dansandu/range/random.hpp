@@ -113,7 +113,6 @@ class RandomRange
 public:
     using generator_type = Generator;
     using value_type = ValueType;
-    using range_category = dansandu::range::category::generator_tag;
     using const_iterator = RandomIterator<generator_type, value_type>;
     using iterator = const_iterator;
 

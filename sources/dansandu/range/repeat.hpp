@@ -67,7 +67,6 @@ class RepeatRange
 {
 public:
     using value_type = ValueType;
-    using range_category = dansandu::range::category::generator_tag;
     using const_iterator = RepeatIterator<value_type>;
     using iterator = const_iterator;
 

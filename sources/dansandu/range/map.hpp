@@ -84,7 +84,6 @@ template<typename InputRange, typename Mapping>
 class MapRange
 {
 public:
-    using range_category = dansandu::range::category::view_tag;
     using range_storage = dansandu::range::storage::Storage<InputRange>;
     using mapping_pointer =
         std::conditional_t<std::is_pointer_v<Mapping> || std::is_member_pointer_v<Mapping>, Mapping, Mapping*>;
@@ -108,14 +107,14 @@ public:
     auto cbegin() const
     {
         if constexpr (std::is_pointer_v<Mapping> || std::is_member_pointer_v<Mapping>)
-            return const_iterator{storage_.cbegin(), mapping_};
+            return const_iterator{storage_.begin(), mapping_};
         else
-            return const_iterator{storage_.cbegin(), &mapping_};
+            return const_iterator{storage_.begin(), &mapping_};
     }
 
     auto cend() const
     {
-        return const_iterator{storage_.cend()};
+        return const_iterator{storage_.end()};
     }
 
     auto begin() const

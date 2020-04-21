@@ -93,7 +93,6 @@ template<typename Zipper, typename LeftRange, typename RightRange>
 struct ZipRange
 {
 public:
-    using range_category = dansandu::range::category::view_tag;
     using decayed_zipper = std::decay_t<Zipper>;
     using zipper_pointer =
         std::conditional_t<std::is_pointer_v<decayed_zipper> || std::is_member_pointer_v<decayed_zipper>,
@@ -123,21 +122,19 @@ public:
     auto cbegin() const
     {
         if constexpr (std::is_pointer_v<decayed_zipper> || std::is_member_pointer_v<decayed_zipper>)
-            return const_iterator{zipper_, leftRange_.cbegin(), leftRange_.cend(), rightRange_.cbegin(),
-                                  rightRange_.cend()};
+            return const_iterator{zipper_, leftRange_.begin(), leftRange_.end(), rightRange_.begin(),
+                                  rightRange_.end()};
         else
-            return const_iterator{&zipper_, leftRange_.cbegin(), leftRange_.cend(), rightRange_.cbegin(),
-                                  rightRange_.cend()};
+            return const_iterator{&zipper_, leftRange_.begin(), leftRange_.end(), rightRange_.begin(),
+                                  rightRange_.end()};
     }
 
     auto cend() const
     {
         if constexpr (std::is_pointer_v<decayed_zipper> || std::is_member_pointer_v<decayed_zipper>)
-            return const_iterator{zipper_, leftRange_.cend(), leftRange_.cend(), rightRange_.cend(),
-                                  rightRange_.cend()};
+            return const_iterator{zipper_, leftRange_.end(), leftRange_.end(), rightRange_.end(), rightRange_.end()};
         else
-            return const_iterator{&zipper_, leftRange_.cend(), leftRange_.cend(), rightRange_.cend(),
-                                  rightRange_.cend()};
+            return const_iterator{&zipper_, leftRange_.end(), leftRange_.end(), rightRange_.end(), rightRange_.end()};
     }
 
     auto begin() const

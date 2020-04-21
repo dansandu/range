@@ -81,7 +81,6 @@ class CycleRange
 {
 public:
     using range_storage = dansandu::range::storage::Storage<InputRange>;
-    using range_category = dansandu::range::category::view_tag;
     using const_iterator = CycleIterator<typename range_storage::const_iterator>;
     using iterator = const_iterator;
 
@@ -100,12 +99,12 @@ public:
 
     auto cbegin() const
     {
-        return const_iterator{inputRange_.cbegin(), inputRange_.cbegin(), inputRange_.cend()};
+        return const_iterator{inputRange_.begin(), inputRange_.begin(), inputRange_.end()};
     }
 
     auto cend() const
     {
-        return const_iterator{inputRange_.cbegin(), inputRange_.cend(), inputRange_.cend()};
+        return const_iterator{inputRange_.begin(), inputRange_.end(), inputRange_.end()};
     }
 
     auto begin() const

@@ -65,7 +65,6 @@ inline auto operator!=(IntegersIterator a, IntegersIterator b)
 class IntegersRange
 {
 public:
-    using range_category = dansandu::range::category::generator_tag;
     using const_iterator = IntegersIterator;
     using iterator = IntegersIterator;
     using value_type = IntegersIterator::value_type;

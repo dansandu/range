@@ -24,7 +24,7 @@ TEST_CASE("Shuffle")
 
         REQUIRE(shuffled.size() == myIntegers.size());
 
-        REQUIRE(std::is_permutation(shuffled.cbegin(), shuffled.cend(), myIntegers.cbegin()));
+        REQUIRE(std::is_permutation(shuffled.cbegin(), shuffled.cend(), myIntegers.begin()));
     }
 
     SECTION("empty range")

@@ -96,7 +96,6 @@ template<typename InputRange, typename Predicate>
 class FilterRange
 {
 public:
-    using range_category = dansandu::range::category::view_tag;
     using range_storage = dansandu::range::storage::Storage<InputRange>;
     using decayed_predicate = std::decay_t<Predicate>;
     using predicate_pointer =
@@ -123,14 +122,14 @@ public:
     auto cbegin() const
     {
         if constexpr (std::is_pointer_v<decayed_predicate> || std::is_member_pointer_v<decayed_predicate>)
-            return const_iterator{inputRange_.cbegin(), inputRange_.cend(), predicate_};
+            return const_iterator{inputRange_.begin(), inputRange_.end(), predicate_};
         else
-            return const_iterator{inputRange_.cbegin(), inputRange_.cend(), &predicate_};
+            return const_iterator{inputRange_.begin(), inputRange_.end(), &predicate_};
     }
 
     auto cend() const
     {
-        return const_iterator{inputRange_.cend(), inputRange_.cend()};
+        return const_iterator{inputRange_.end(), inputRange_.end()};
     }
 
     auto begin() const

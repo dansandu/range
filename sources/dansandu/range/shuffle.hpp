@@ -28,7 +28,7 @@ public:
     template<typename InputRange>
     auto bind(InputRange&& inputRange) &&
     {
-        using value_type = typename std::decay_t<decltype(*std::forward<InputRange>(inputRange).cbegin())>;
+        using value_type = typename std::decay_t<decltype(*std::forward<InputRange>(inputRange).begin())>;
         auto result = std::vector<value_type>{};
         for (auto&& element : inputRange)
             result.push_back(std::forward<decltype(element)>(element));
