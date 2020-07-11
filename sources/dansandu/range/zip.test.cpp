@@ -157,8 +157,7 @@ TEST_CASE("Zip")
         {
             using strings = std::vector<std::wstring>;
 
-            auto zipper =
-                static_cast<int (std::wstring::*)(const std::wstring&) const noexcept>(&std::wstring::compare);
+            auto zipper = static_cast<int (std::wstring::*)(const std::wstring&) const>(&std::wstring::compare);
 
             auto english = strings{{L"cat", L"food", L"house", L"duck"}};
             auto romanian = strings{{L"pisică", L"mâncare", L"casă", L"rață"}};
