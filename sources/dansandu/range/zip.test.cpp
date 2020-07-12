@@ -9,7 +9,6 @@
 
 using dansandu::range::zip::zip;
 using dansandu::range::pipe::operator|;
-using std::string_view_literals::operator""sv;
 
 struct Word
 {
@@ -28,19 +27,19 @@ TEST_CASE("Zip")
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == std::make_pair("Annie"sv, 23));
+        REQUIRE(*iterator == std::make_pair(std::string_view{"Annie"}, 23));
 
         ++iterator;
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == std::make_pair("John"sv, 32));
+        REQUIRE(*iterator == std::make_pair(std::string_view{"John"}, 32));
 
         ++iterator;
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == std::make_pair("Sam"sv, 48));
+        REQUIRE(*iterator == std::make_pair(std::string_view{"Sam"}, 48));
 
         ++iterator;
 
@@ -58,13 +57,13 @@ TEST_CASE("Zip")
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == std::make_pair("Jim"sv, 32));
+        REQUIRE(*iterator == std::make_pair(std::string_view{"Jim"}, 32));
 
         ++iterator;
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == std::make_pair("Arthas"sv, 22));
+        REQUIRE(*iterator == std::make_pair(std::string_view{"Arthas"}, 22));
 
         ++iterator;
 
@@ -82,13 +81,13 @@ TEST_CASE("Zip")
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == std::make_pair("Zusan"sv, 50));
+        REQUIRE(*iterator == std::make_pair(std::string_view{"Zusan"}, 50));
 
         ++iterator;
 
         REQUIRE(iterator != end);
 
-        REQUIRE(*iterator == std::make_pair("John"sv, 60));
+        REQUIRE(*iterator == std::make_pair(std::string_view{"John"}, 60));
 
         ++iterator;
 
