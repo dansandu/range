@@ -23,7 +23,7 @@ public:
     auto bind(InputRange&& inputRange) &&
     {
         auto seed = std::size_t{};
-        for (const auto& element : inputRange)
+        for (auto&& element : inputRange)
             seed = dansandu::ballotin::hash::hashCombine(seed, element);
         return seed;
     }
