@@ -59,7 +59,7 @@ public:
         return copy;
     }
 
-    auto operator*() const
+    decltype(auto) operator*() const
     {
         return *position_;
     }
@@ -124,14 +124,6 @@ private:
 class CycleBinder : public dansandu::range::category::range_binder_tag
 {
 public:
-    CycleBinder(const CycleBinder&) = delete;
-
-    CycleBinder(CycleBinder&&) = default;
-
-    CycleBinder& operator=(const CycleBinder&) = delete;
-
-    CycleBinder& operator=(CycleBinder&&) = default;
-
     template<typename InputRange>
     auto bind(InputRange&& inputRange) &&
     {

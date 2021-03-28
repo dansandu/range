@@ -20,14 +20,6 @@ public:
     {
     }
 
-    FoldBinder(const FoldBinder&) = delete;
-
-    FoldBinder(FoldBinder&&) = default;
-
-    FoldBinder& operator=(const FoldBinder&) = delete;
-
-    FoldBinder& operator=(FoldBinder&&) = default;
-
     template<typename InputRange>
     auto bind(InputRange&& inputRange) &&
     {

@@ -7,6 +7,15 @@ namespace dansandu::range::category
 
 struct range_binder_tag
 {
+    range_binder_tag() = default;
+
+    range_binder_tag(const range_binder_tag&) = delete;
+
+    range_binder_tag(range_binder_tag&&) = default;
+
+    range_binder_tag& operator=(const range_binder_tag&) = delete;
+
+    range_binder_tag& operator=(range_binder_tag&&) = default;
 };
 
 template<typename Type>

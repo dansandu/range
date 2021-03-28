@@ -29,14 +29,6 @@ public:
     {
     }
 
-    ConcatenateIterator(const ConcatenateIterator&) = default;
-
-    ConcatenateIterator(ConcatenateIterator&&) = default;
-
-    ConcatenateIterator& operator=(const ConcatenateIterator&) = default;
-
-    ConcatenateIterator& operator=(ConcatenateIterator&&) = default;
-
     auto& operator++()
     {
         if (leftPosition_ != leftEnd_)
@@ -133,14 +125,6 @@ public:
         : rightRange_{std::forward<RightRangeForward>(rightRange)}
     {
     }
-
-    ConcatenateBinder(const ConcatenateBinder&) = delete;
-
-    ConcatenateBinder(ConcatenateBinder&&) = default;
-
-    ConcatenateBinder& operator=(const ConcatenateBinder&) = delete;
-
-    ConcatenateBinder& operator=(ConcatenateBinder&&) = default;
 
     template<typename LeftRange>
     auto bind(LeftRange&& leftRange) &&

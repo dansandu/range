@@ -12,7 +12,7 @@ namespace dansandu::range::map
 template<typename InputIterator, typename MappingPointer>
 class MapIterator
 {
-    static auto map(const InputIterator& position, MappingPointer mapping)
+    static decltype(auto) map(const InputIterator& position, MappingPointer mapping)
     {
         if constexpr (std::is_member_function_pointer_v<MappingPointer>)
             return ((*position).*mapping)();
@@ -64,7 +64,7 @@ public:
         return copy;
     }
 
-    auto operator*() const
+    decltype(auto) operator*() const
     {
         return map(position_, mapping_);
     }
@@ -142,14 +142,6 @@ public:
     MapBinder(MappingForward&& mapping) : mapping_{std::forward<MappingForward>(mapping)}
     {
     }
-
-    MapBinder(const MapBinder&) = delete;
-
-    MapBinder(MapBinder&&) = default;
-
-    MapBinder& operator=(const MapBinder&) = delete;
-
-    MapBinder& operator=(MapBinder&&) = default;
 
     template<typename InputRange>
     auto bind(InputRange&& inputRange) &&

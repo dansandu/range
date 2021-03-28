@@ -56,7 +56,7 @@ public:
         return copy;
     }
 
-    auto operator*() const
+    decltype(auto) operator*() const
     {
         return *position_;
     }
@@ -127,14 +127,6 @@ public:
     explicit TakeBinder(int elementsToTake) : elementsToTake_{elementsToTake}
     {
     }
-
-    TakeBinder(const TakeBinder&) = delete;
-
-    TakeBinder(TakeBinder&&) = default;
-
-    TakeBinder& operator=(const TakeBinder&) = delete;
-
-    TakeBinder& operator=(TakeBinder&&) = default;
 
     template<typename InputRange>
     auto bind(InputRange&& inputRange) &&

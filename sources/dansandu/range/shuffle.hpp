@@ -17,14 +17,6 @@ public:
     {
     }
 
-    ShuffleBinder(const ShuffleBinder&) = delete;
-
-    ShuffleBinder(ShuffleBinder&&) = default;
-
-    ShuffleBinder& operator=(const ShuffleBinder&) = delete;
-
-    ShuffleBinder& operator=(ShuffleBinder&&) = default;
-
     template<typename InputRange>
     auto bind(InputRange&& inputRange) &&
     {

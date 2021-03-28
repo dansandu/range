@@ -57,7 +57,7 @@ public:
         return copy;
     }
 
-    auto operator*() const
+    decltype(auto) operator*() const
     {
         return *position_;
     }
@@ -157,14 +157,6 @@ public:
     explicit FilterBinder(PredicateForward&& predicate) : predicate_{std::forward<PredicateForward>(predicate)}
     {
     }
-
-    FilterBinder(const FilterBinder&) = delete;
-
-    FilterBinder(FilterBinder&&) = default;
-
-    FilterBinder& operator=(const FilterBinder&) = delete;
-
-    FilterBinder& operator=(FilterBinder&&) = default;
 
     template<typename InputRange>
     auto bind(InputRange&& inputRange) &&

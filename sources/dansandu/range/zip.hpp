@@ -13,7 +13,7 @@ namespace dansandu::range::zip
 template<typename ZipperPointer, typename LeftIterator, typename RightIterator>
 class ZipIterator
 {
-    static auto zip(ZipperPointer zipper, const LeftIterator& left, const RightIterator& right)
+    static decltype(auto) zip(ZipperPointer zipper, const LeftIterator& left, const RightIterator& right)
     {
         if constexpr (std::is_member_function_pointer_v<ZipperPointer>)
             return ((*left).*zipper)(*right);
@@ -69,7 +69,7 @@ public:
         return copy;
     }
 
-    auto operator*() const
+    decltype(auto) operator*() const
     {
         return zip(zipper_, leftPosition_, rightPosition_);
     }
@@ -164,14 +164,6 @@ public:
         : zipper_{std::forward<ZipperForward>(zipper)}, rightRange_{std::forward<RightRangeForward>(rightRange)}
     {
     }
-
-    ZipBinder(const ZipBinder&) = delete;
-
-    ZipBinder(ZipBinder&&) = default;
-
-    ZipBinder& operator=(const ZipBinder&) = delete;
-
-    ZipBinder& operator=(ZipBinder&&) = default;
 
     template<typename LeftRange>
     auto bind(LeftRange&& leftRange) &&

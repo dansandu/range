@@ -84,7 +84,7 @@ public:
         return copy;
     }
 
-    auto operator*() const
+    const auto& operator*() const
     {
         return value_;
     }
@@ -119,14 +119,6 @@ public:
     RandomRange(generator_type* generator, const ValueType& a, const ValueType& b) : generator_{generator}, a_{a}, b_{b}
     {
     }
-
-    RandomRange(const RandomRange&) = delete;
-
-    RandomRange(RandomRange&&) = default;
-
-    RandomRange& operator=(const RandomRange&) = delete;
-
-    RandomRange& operator=(RandomRange&&) = default;
 
     auto cbegin() const
     {

@@ -16,19 +16,11 @@ public:
     {
     }
 
-    ConsumeBinder(const ConsumeBinder&) = delete;
-
-    ConsumeBinder(ConsumeBinder&&) = default;
-
-    ConsumeBinder& operator=(const ConsumeBinder&) = delete;
-
-    ConsumeBinder& operator=(ConsumeBinder&&) = default;
-
     template<typename InputRange>
     auto bind(InputRange&& inputRange) &&
     {
         for (auto&& element : inputRange)
-            consumer_(element);
+            consumer_(std::forward<decltype(element)>(element));
     }
 
 private:

@@ -42,7 +42,7 @@ public:
         return copy;
     }
 
-    auto operator*() const
+    const auto& operator*() const
     {
         return integer_;
     }
