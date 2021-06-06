@@ -4,15 +4,15 @@
 
 #include <type_traits>
 
-namespace dansandu::range::consume
+namespace dansandu::range::for_each
 {
 
 template<typename Consumer>
-class ConsumeBinder : public dansandu::range::category::range_binder_tag
+class ForEachBinder : public dansandu::range::category::range_binder_tag
 {
 public:
     template<typename C>
-    ConsumeBinder(C&& consumer) : consumer_{std::forward<C>(consumer)}
+    ForEachBinder(C&& consumer) : consumer_{std::forward<C>(consumer)}
     {
     }
 
@@ -28,10 +28,10 @@ private:
 };
 
 template<typename Consumer>
-auto consume(Consumer&& consumer)
+auto forEach(Consumer&& consumer)
 {
     using consumer_type = std::decay_t<Consumer>;
-    return ConsumeBinder<consumer_type>{std::forward<Consumer>(consumer)};
+    return ForEachBinder<consumer_type>{std::forward<Consumer>(consumer)};
 }
 
 }

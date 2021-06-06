@@ -1,10 +1,10 @@
 #pragma once
 
 #include "dansandu/range/concatenate.hpp"
-#include "dansandu/range/consume.hpp"
 #include "dansandu/range/cycle.hpp"
 #include "dansandu/range/filter.hpp"
 #include "dansandu/range/fold.hpp"
+#include "dansandu/range/for_each.hpp"
 #include "dansandu/range/integers.hpp"
 #include "dansandu/range/map.hpp"
 #include "dansandu/range/pipe.hpp"
@@ -19,9 +19,9 @@ namespace dansandu::range::range
 {
 
 using dansandu::range::concatenate::concatenate;
-using dansandu::range::consume::consume;
 using dansandu::range::filter::filter;
 using dansandu::range::fold::fold;
+using dansandu::range::for_each::forEach;
 using dansandu::range::integers::integers;
 using dansandu::range::map::map;
 using dansandu::range::repeat::repeat;
