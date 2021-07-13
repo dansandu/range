@@ -1,36 +1,36 @@
 #include "catchorg/catch/catch.hpp"
+#include "dansandu/ballotin/test/random.hpp"
 #include "dansandu/range/integers.hpp"
 #include "dansandu/range/pipe.hpp"
 #include "dansandu/range/shuffle.hpp"
 #include "dansandu/range/to_vector.hpp"
 
 #include <algorithm>
-#include <random>
 #include <vector>
 
 using dansandu::range::integers::integers;
 using dansandu::range::shuffle::shuffle;
 using dansandu::range::to_vector::toVector;
 using dansandu::range::pipe::operator|;
+using dansandu::ballotin::test::random::PredictableBitGenerator;
 
 TEST_CASE("Shuffle")
 {
-    auto generator = std::minstd_rand{};
+    auto generator = PredictableBitGenerator{};
 
     SECTION("integers")
     {
-        auto myIntegers = integers(0, 1, 100) | toVector();
-        auto shuffled = myIntegers | shuffle(generator);
+        const auto myIntegers = integers(0, 1, 10) | toVector();
+        const auto shuffled = myIntegers | shuffle(generator);
+        const auto expected = std::vector<int>{{1, 2, 8, 3, 5, 7, 9, 4, 6, 0}};
 
-        REQUIRE(shuffled.size() == myIntegers.size());
-
-        REQUIRE(std::is_permutation(shuffled.cbegin(), shuffled.cend(), myIntegers.begin()));
+        REQUIRE(expected == shuffled);
     }
 
     SECTION("empty range")
     {
-        auto integers = std::vector<int>{};
-        auto shuffled = integers | shuffle(generator);
+        const auto integers = std::vector<int>{};
+        const auto shuffled = integers | shuffle(generator);
 
         REQUIRE(shuffled.empty());
     }
