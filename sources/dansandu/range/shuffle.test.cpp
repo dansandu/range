@@ -1,5 +1,5 @@
 #include "catchorg/catch/catch.hpp"
-#include "dansandu/ballotin/test/random.hpp"
+#include "dansandu/ballotin/random.hpp"
 #include "dansandu/range/integers.hpp"
 #include "dansandu/range/pipe.hpp"
 #include "dansandu/range/shuffle.hpp"
@@ -12,7 +12,7 @@ using dansandu::range::integers::integers;
 using dansandu::range::shuffle::shuffle;
 using dansandu::range::to_vector::toVector;
 using dansandu::range::pipe::operator|;
-using dansandu::ballotin::test::random::PredictableBitGenerator;
+using dansandu::ballotin::random::PredictableBitGenerator;
 
 TEST_CASE("Shuffle")
 {
