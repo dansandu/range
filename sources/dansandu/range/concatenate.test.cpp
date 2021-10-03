@@ -1,5 +1,5 @@
-#include "catchorg/catch/catch.hpp"
 #include "dansandu/range/concatenate.hpp"
+#include "catchorg/catch/catch.hpp"
 #include "dansandu/range/pipe.hpp"
 
 using dansandu::range::concatenate::concatenate;

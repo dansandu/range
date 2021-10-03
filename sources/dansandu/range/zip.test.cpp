@@ -1,6 +1,6 @@
+#include "dansandu/range/zip.hpp"
 #include "catchorg/catch/catch.hpp"
 #include "dansandu/range/pipe.hpp"
-#include "dansandu/range/zip.hpp"
 
 #include <string>
 #include <string_view>

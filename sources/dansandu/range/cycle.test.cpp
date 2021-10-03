@@ -1,5 +1,5 @@
-#include "catchorg/catch/catch.hpp"
 #include "dansandu/range/cycle.hpp"
+#include "catchorg/catch/catch.hpp"
 #include "dansandu/range/pipe.hpp"
 #include "dansandu/range/take.hpp"
 #include "dansandu/range/to_vector.hpp"

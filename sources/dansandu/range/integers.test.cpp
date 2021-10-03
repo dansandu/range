@@ -1,5 +1,5 @@
-#include "catchorg/catch/catch.hpp"
 #include "dansandu/range/integers.hpp"
+#include "catchorg/catch/catch.hpp"
 #include "dansandu/range/pipe.hpp"
 
 #include <vector>

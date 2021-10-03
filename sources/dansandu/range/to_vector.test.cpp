@@ -1,6 +1,6 @@
+#include "dansandu/range/to_vector.hpp"
 #include "catchorg/catch/catch.hpp"
 #include "dansandu/range/pipe.hpp"
-#include "dansandu/range/to_vector.hpp"
 
 #include <algorithm>
 #include <list>

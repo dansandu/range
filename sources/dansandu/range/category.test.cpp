@@ -1,5 +1,5 @@
-#include "catchorg/catch/catch.hpp"
 #include "dansandu/range/category.hpp"
+#include "catchorg/catch/catch.hpp"
 
 #include <map>
 #include <string>

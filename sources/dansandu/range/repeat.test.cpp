@@ -1,6 +1,6 @@
+#include "dansandu/range/repeat.hpp"
 #include "catchorg/catch/catch.hpp"
 #include "dansandu/range/pipe.hpp"
-#include "dansandu/range/repeat.hpp"
 #include "dansandu/range/take.hpp"
 #include "dansandu/range/to_vector.hpp"
 

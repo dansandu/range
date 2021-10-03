@@ -1,6 +1,6 @@
+#include "dansandu/range/random.hpp"
 #include "catchorg/catch/catch.hpp"
 #include "dansandu/range/pipe.hpp"
-#include "dansandu/range/random.hpp"
 #include "dansandu/range/take.hpp"
 
 #include <algorithm>

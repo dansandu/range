@@ -23,8 +23,8 @@ class ZipIterator
 
 public:
     using iterator_category = std::input_iterator_tag;
-    using value_type = typename std::decay_t<decltype(
-        zip(std::declval<ZipperPointer>(), std::declval<LeftIterator>(), std::declval<RightIterator>()))>;
+    using value_type = typename std::decay_t<decltype(zip(std::declval<ZipperPointer>(), std::declval<LeftIterator>(),
+                                                          std::declval<RightIterator>()))>;
     using pointer = value_type*;
     using reference = value_type&;
     using difference_type = long long;
