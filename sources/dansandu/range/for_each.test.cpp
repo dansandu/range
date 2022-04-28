@@ -7,7 +7,7 @@
 using dansandu::range::for_each::forEach;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("ForEach")
+TEST_CASE("for_each")
 {
     SECTION("non-empty range")
     {

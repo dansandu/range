@@ -5,7 +5,7 @@
 using dansandu::range::concatenate::concatenate;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("Concatenate")
+TEST_CASE("concatenate")
 {
     SECTION("empty with empty")
     {

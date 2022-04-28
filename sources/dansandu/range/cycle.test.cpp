@@ -11,7 +11,7 @@ using dansandu::range::pipe::operator|;
 using dansandu::range::take::take;
 using dansandu::range::to_vector::toVector;
 
-TEST_CASE("Cycle")
+TEST_CASE("cycle")
 {
     SECTION("non-empty range")
     {

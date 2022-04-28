@@ -14,7 +14,7 @@ struct Word
 {
 };
 
-TEST_CASE("Zip")
+TEST_CASE("zip")
 {
     SECTION("equal ranges")
     {

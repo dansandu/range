@@ -44,7 +44,7 @@ static auto isPrime(int number)
     return number % divisor != 0;
 }
 
-TEST_CASE("Filter")
+TEST_CASE("filter")
 {
     SECTION("with lambda")
     {

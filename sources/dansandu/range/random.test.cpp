@@ -10,7 +10,7 @@ using dansandu::range::random::random;
 using dansandu::range::take::take;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("Random")
+TEST_CASE("random")
 {
     auto generator = std::minstd_rand{};
 

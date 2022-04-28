@@ -11,7 +11,7 @@ using dansandu::range::take::take;
 using dansandu::range::to_vector::toVector;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("Repeat")
+TEST_CASE("repeat")
 {
     auto range = repeat(3) | take(5) | toVector();
     auto expected = std::vector<int>{{3, 3, 3, 3, 3}};

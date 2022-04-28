@@ -28,7 +28,7 @@ struct NotArange
     std::vector<int> values;
 };
 
-TEST_CASE("Category")
+TEST_CASE("category")
 {
     SECTION("pipe head")
     {

@@ -9,7 +9,7 @@ using dansandu::range::hash::hash;
 using dansandu::range::take::take;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("Hash")
+TEST_CASE("hash")
 {
     auto integers = std::vector<int>{{3, 17, 57}};
     auto hash1 = integers | take(1) | hash();

@@ -11,7 +11,7 @@
 using dansandu::range::to_vector::toVector;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("ToVector")
+TEST_CASE("to_vector")
 {
     SECTION("integers")
     {

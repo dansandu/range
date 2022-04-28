@@ -7,7 +7,7 @@
 
 using namespace dansandu::range::range;
 
-TEST_CASE("Pipe")
+TEST_CASE("pipe")
 {
     auto names = std::vector<const char*>{{"Timmy", "Marie", "Billy", "Eddie", "Kate"}};
     auto ages = std::vector<int>{23, 33, 30, 20, 18};

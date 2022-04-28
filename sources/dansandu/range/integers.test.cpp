@@ -7,7 +7,7 @@
 using dansandu::range::integers::integers;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("Integers")
+TEST_CASE("integers")
 {
     SECTION("natural numbers")
     {

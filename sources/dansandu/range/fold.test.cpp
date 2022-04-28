@@ -8,7 +8,7 @@
 using dansandu::range::fold::fold;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("Fold")
+TEST_CASE("fold")
 {
     auto add = [](const auto& a, const auto& b) { return a + b; };
 

@@ -27,7 +27,7 @@ auto scale(int integer)
     return 2 * integer;
 }
 
-TEST_CASE("Map")
+TEST_CASE("map")
 {
     SECTION("with lambda")
     {

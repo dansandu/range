@@ -14,7 +14,7 @@ using dansandu::range::to_vector::toVector;
 using dansandu::range::pipe::operator|;
 using dansandu::ballotin::random::PredictableBitGenerator;
 
-TEST_CASE("Shuffle")
+TEST_CASE("shuffle")
 {
     auto generator = PredictableBitGenerator{};
 

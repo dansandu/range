@@ -9,7 +9,7 @@
 using dansandu::range::take::take;
 using dansandu::range::pipe::operator|;
 
-TEST_CASE("Take")
+TEST_CASE("take")
 {
     std::vector<std::string_view> names = {"Beatrice", "Michael", "Lisa"};
 
