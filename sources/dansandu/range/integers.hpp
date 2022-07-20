@@ -88,11 +88,7 @@ public:
 
     auto cend() const
     {
-        if (count_ != -1)
-        {
-            return const_iterator{start_ + count_ * step_, step_};
-        }
-        else
+        if (count_ < 0)
         {
             if (step_ < 0)
             {
@@ -102,6 +98,10 @@ public:
             {
                 return const_iterator{std::numeric_limits<value_type>::max(), step_};
             }
+        }
+        else
+        {
+            return const_iterator{start_ + count_ * step_, step_};
         }
     }
 
