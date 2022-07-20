@@ -88,7 +88,21 @@ public:
 
     auto cend() const
     {
-        return const_iterator{start_ + step_ * count_, step_};
+        if (count_ != -1)
+        {
+            return const_iterator{start_ + count_ * step_, step_};
+        }
+        else
+        {
+            if (step_ < 0)
+            {
+                return const_iterator{std::numeric_limits<value_type>::min(), step_};
+            }
+            else
+            {
+                return const_iterator{std::numeric_limits<value_type>::max(), step_};
+            }
+        }
     }
 
     auto begin() const
@@ -107,30 +121,10 @@ private:
     value_type count_;
 };
 
-inline auto integers(IntegersRange::value_type start, IntegersRange::value_type step, IntegersRange::value_type count)
+inline auto integers(IntegersRange::value_type start = 0, IntegersRange::value_type step = 1,
+                     IntegersRange::value_type count = -1)
 {
     return IntegersRange{start, step, count};
-}
-
-inline auto integers(IntegersRange::value_type start, IntegersRange::value_type step)
-{
-    using safe_type = long long;
-    static_assert(sizeof(IntegersRange::value_type) < sizeof(safe_type));
-    auto count = static_cast<IntegersRange::value_type>(
-        (static_cast<safe_type>(std::numeric_limits<IntegersRange::value_type>::max()) -
-         static_cast<safe_type>(start)) /
-        static_cast<safe_type>(step));
-    return IntegersRange{start, step, count};
-}
-
-inline auto integers(IntegersRange::value_type start)
-{
-    return integers(start, 1);
-}
-
-inline auto integers()
-{
-    return integers(0, 1);
 }
 
 }
