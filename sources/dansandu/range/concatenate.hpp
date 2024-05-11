@@ -19,7 +19,7 @@ public:
     using reference = value_type&;
     using pointer = value_type*;
 
-    friend auto operator==(const ConcatenateIterator& a, const ConcatenateIterator& b)
+    friend bool operator==(const ConcatenateIterator& a, const ConcatenateIterator& b)
     {
         return a.leftPosition_ == b.leftPosition_ && a.rightPosition_ == b.rightPosition_;
     }
