@@ -20,7 +20,7 @@ public:
     using reference = value_type&;
     using difference_type = long long;
 
-    friend auto operator==(const TakeIterator& a, const TakeIterator& b)
+    friend bool operator==(const TakeIterator& a, const TakeIterator& b)
     {
         return a.position_ == b.position_ ||
                (a.elementsTaken_ >= a.elementsToTake_ && b.elementsTaken_ >= b.elementsToTake_);

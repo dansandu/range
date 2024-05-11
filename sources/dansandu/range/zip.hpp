@@ -29,7 +29,7 @@ public:
     using reference = value_type&;
     using difference_type = long long;
 
-    friend auto operator==(const ZipIterator& a, const ZipIterator& b)
+    friend bool operator==(const ZipIterator& a, const ZipIterator& b)
     {
         return a.leftPosition_ == b.leftPosition_ || a.rightPosition_ == b.rightPosition_;
     }

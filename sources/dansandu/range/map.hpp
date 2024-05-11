@@ -30,7 +30,7 @@ public:
     using reference = value_type&;
     using pointer = value_type*;
 
-    friend auto operator==(const MapIterator& a, const MapIterator& b)
+    friend bool operator==(const MapIterator& a, const MapIterator& b)
     {
         return a.position_ == b.position_;
     }

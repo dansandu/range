@@ -19,7 +19,7 @@ public:
     using reference = value_type&;
     using difference_type = long long;
 
-    friend auto operator==(const FilterIterator& a, const FilterIterator& b)
+    friend bool operator==(const FilterIterator& a, const FilterIterator& b)
     {
         return a.position_ == b.position_;
     }
